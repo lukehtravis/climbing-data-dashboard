@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-const FileUploadForm: React.FC = () => {
+const Dashboard: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   // const [climbingData, setClimbingData] = useState<File | null>(null);
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,4 +37,4 @@ const FileUploadForm: React.FC = () => {
   );
 };
 
-export default FileUploadForm;
+export default Dashboard;
