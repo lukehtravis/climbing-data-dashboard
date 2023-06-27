@@ -1,37 +1,22 @@
 "use client";
 
 import React, { useState } from 'react';
+import Form from './Form';
+import Visualizations from './Visualizations';
 
 const Dashboard: React.FC = () => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  // const [climbingData, setClimbingData] = useState<File | null>(null);
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      setSelectedFile(files[0]);
-    }
-  };
-
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (selectedFile) {
-      // We can process data from the file in here and then pass it into setClimbingData
-      alert("You've Successfully uploaded a file. We aren't yet able to process it, unfortunately.")
-    }
-  };
+  // Set component state (data), and create a function to mutate our state (setData)
+  const [data, setData] = useState<any | null>(null);
 
   return (
     <div>
-      <form onSubmit={handleFormSubmit}>
-        <input type="file" accept=".csv" onChange={handleFileChange} />
-        <button type="submit">Upload</button>
-      </form>
       {
-        /*
-          some logic that checks if climbingData is populated, and if so, outputs the <Visualizations data={climbingData} /> component
+        /* 
+          The line below conditionally renders two components. If theres no data, we show the Form component and pass it the setData state mutator. 
+          If they have filled out the form, then data will not be populated, in which case we pass data to our visualization component and show the user that.
         */
       }
+      {!data ? <Form populateData={setData} /> : <Visualizations data={data} />}
     </div>
 
   );
