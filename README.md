@@ -6,17 +6,22 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The homepage/landing page is on page.tsx  
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Styling 
+
+We are using [tailwind css](https://tailwindcss.com/) for css formatting. So all styles are attached via class names to html/react elements 
+
+## Creating Pages
+
+To create a new page, add a new folder directly under the app directory, which corresponds to the url you would like that page to live at, and then create a file under it called page.tsx, and import any components you would like into that file. The page will then be available at that specified url. For instance, in the http://localhost:3000/dashboard page, the page is populated by the code in app/dashboard/page.tsx, and has the word dashboard in the url because we named our directory dashboard.
+
+## Creating Components
+
+For page specific components, we will create a folder under each page called components, and put our components inside of that. For sitewide components, we can put those in a folder called components that lives directly inside the app folder, and import them into the various pages as needed. 
 
 ## Learn More
 
