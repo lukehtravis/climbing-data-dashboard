@@ -2,7 +2,7 @@
 
 import React from "react";
 
-// We can define what this object will look like after 
+// We can define what this object will look like after we decide exactly what we want to pass in
 interface Props {
     data: any
 }
@@ -12,7 +12,7 @@ const Visualizations: React.FC<Props> = ({data}: Props) => {
   return (
     <div>
       <p>Successful upload! However, we dont have any processing functions yet. Once we do, visualizations will appear here after loading</p>
-      <p>{data}</p>
+      <p>{JSON.stringify(data)}</p>
     </div>
   
   );
