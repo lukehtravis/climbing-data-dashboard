@@ -6,6 +6,7 @@ First, run the development server:
 
 ```bash
 npm run dev
+```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
@@ -22,6 +23,16 @@ To create a new page, add a new folder directly under the app directory, which c
 ## Creating Components
 
 For page specific components, we will create a folder under each page called components, and put our components inside of that. For sitewide components, we can put those in a folder called components that lives directly inside the app folder, and import them into the various pages as needed. 
+
+## Creating Unit Tests
+
+We are using [jest](https://jestjs.io/docs/getting-started) for unit testing. After you've written your tests, just run 
+
+```bash
+npm test
+```
+
+And your tests will be run!
 
 ## Learn More
 
