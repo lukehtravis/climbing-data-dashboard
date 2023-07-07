@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
+import Papa, { ParseResult } from "papaparse";
+import RawDataRow, {RawDataList} from "../types/raw-data-from-mountain-project";
 
 interface Props {
-  populateData: React.Dispatch<React.SetStateAction<any | null>>
+  populateData: React.Dispatch<React.SetStateAction<RawDataList | null>>
 }
 
 const Form: React.FC<Props> = ({populateData}: Props) => {
@@ -20,10 +22,17 @@ const Form: React.FC<Props> = ({populateData}: Props) => {
     event.preventDefault();
   
     if (selectedFile) {
-      // We can process data from the file in here and then pass it into setClimbingData
-      // Do Some Processing to the file here
-      // const processedFile = processFile(selectedFile)
-      populateData(/*commented out placeholder for processedFile*/"Hi it's me! I'm your data!")
+      Papa.parse(selectedFile, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results:ParseResult<any>) => {
+          if( results.errors.length === 0) {
+            const resultsData:RawDataList = results.data 
+            // Could just process the data here, or we could use populateData to add it to the state of the Dashboard component and process the data there
+            populateData(resultsData)
+          }
+        }
+      })
     }
   };
   
@@ -33,11 +42,6 @@ const Form: React.FC<Props> = ({populateData}: Props) => {
         <input type="file" accept=".csv" onChange={handleFileChange} />
         <button type="submit">Upload</button>
       </form>
-      {
-        /*
-            some logic that checks if climbingData is populated, and if so, outputs the <Visualizations data={climbingData} /> component
-          */
-      }
     </div>
   
   );
