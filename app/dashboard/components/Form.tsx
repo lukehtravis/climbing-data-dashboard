@@ -2,14 +2,14 @@
 
 import React, { useState } from "react";
 import Papa, { ParseResult } from "papaparse";
-import RawDataRow, {RawDataList} from "../types/raw-data-from-mountain-project";
+import RawDataRow, { RawDataList } from "../types/raw-data-from-mountain-project";
 import { mappingMpCodesToYdsGrades, eliminateSlashesFromGrades, flattenPlusAndMinusGrades, removeRiskRating } from "@/app/utils/data-processing-helpers";
 
 interface Props {
   populateData: React.Dispatch<React.SetStateAction<RawDataList | null>>
 }
 
-const Form: React.FC<Props> = ({populateData}: Props) => {
+const Form: React.FC<Props> = ({ populateData }: Props) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,20 +18,20 @@ const Form: React.FC<Props> = ({populateData}: Props) => {
       setSelectedFile(files[0]);
     }
   };
-  
+
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  
+
     if (selectedFile) {
       Papa.parse(selectedFile, {
         header: true,
         skipEmptyLines: true,
-        complete: (results:ParseResult<any>) => {
-          if( results.errors.length === 0) {
-            const resultsData:RawDataList = results.data 
+        complete: (results: ParseResult<any>) => {
+          if (results.errors.length === 0) {
+            const resultsData: RawDataList = results.data
             // process here, Luke said
             resultsData.forEach(element => {
-              element.Rating = eliminateSlashesFromGrades(element.Rating); 
+              element.Rating = eliminateSlashesFromGrades(element.Rating);
               element.Rating = flattenPlusAndMinusGrades(element.Rating);
               element.Rating = removeRiskRating(element.Rating);
               // soundas: this seems a bit kludgy; TODO: how do I chain + assign concisely
@@ -42,7 +42,7 @@ const Form: React.FC<Props> = ({populateData}: Props) => {
       })
     }
   };
-  
+
   return (
     <div>
       <form onSubmit={handleFormSubmit}>
@@ -50,8 +50,8 @@ const Form: React.FC<Props> = ({populateData}: Props) => {
         <button type="submit">Upload</button>
       </form>
     </div>
-  
+
   );
 };
-  
+
 export default Form;
