@@ -19,6 +19,11 @@ const Form: React.FC<Props> = ({ populateData }: Props) => {
     }
   };
 
+  const roped = ["Sport", "Trad"];
+  const boulder = ["Boulder"]; //  nope let's do this w/o combinations too; looks like some of the boulder/trads were done as trad...filter again
+  const boulderStyleNaive = ["Flash", "Send", "Attempt"];
+  const ropedStyleNaive = ["Onsight", "Flash", "Redpoint", "Fell/Hung", "Pinkpoint"];
+
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -30,13 +35,16 @@ const Form: React.FC<Props> = ({ populateData }: Props) => {
           if (results.errors.length === 0) {
             const resultsData: RawDataList = results.data
             // process here, Luke said
-            resultsData.forEach(element => {
+            const ropedOnlyNaive = resultsData.filter((oneRoute) => roped.includes(oneRoute["Route Type"]));
+            ropedOnlyNaive.forEach(element => {
               element.Rating = eliminateSlashesFromGrades(element.Rating);
               element.Rating = flattenPlusAndMinusGrades(element.Rating);
               element.Rating = removeRiskRating(element.Rating);
+              console.log(element.Rating)
               // soundas: this seems a bit kludgy; TODO: how do I chain + assign concisely
             });
-            populateData(resultsData)
+            const boulderOnlyNaive = resultsData.filter((oneRoute) => boulder.includes(oneRoute["Route Type"]) || boulderStyleNaive.includes(oneRoute["Style"]));
+            populateData(ropedOnlyNaive) // how...will populate now work. Luke, help! 
           }
         }
       })
