@@ -1,4 +1,3 @@
-import { New_Tegomin } from "next/font/google"
 import { CODE_TO_GRADE_MAPPING } from "../constants"
 
 export const mappingMpCodesToYdsGrades = (mpCode:string): string => {
