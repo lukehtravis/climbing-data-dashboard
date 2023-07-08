@@ -1,6 +1,16 @@
-import { Inter } from 'next/font/google'
+import { Inter, DM_Sans } from 'next/font/google'
 
-const inter = Inter({ subsets: ['latin'] })
+
+const inter = Inter({ 
+  subsets: ['latin'] ,
+  variable: '--font-inter',
+  weight: '400'
+})
+const dmsans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
+  weight: '400'
+})
 
 export const metadata = {
   title: 'Create Next App',
@@ -13,8 +23,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className={`${inter.className} ${dmsans.className}`}>
+      <body>{children}</body>
     </html>
   )
 }
