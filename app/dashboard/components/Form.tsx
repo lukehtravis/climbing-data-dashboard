@@ -44,7 +44,8 @@ const Form: React.FC<Props> = ({ populateData }: Props) => {
               // soundas: this seems a bit kludgy; TODO: how do I chain + assign concisely
             });
             const boulderOnlyNaive = resultsData.filter((oneRoute) => boulder.includes(oneRoute["Route Type"]) || boulderStyleNaive.includes(oneRoute["Style"]));
-            populateData(ropedOnlyNaive) // how...will populate now work. Luke, help! 
+            let allRoutes = [...ropedOnlyNaive, ...boulderOnlyNaive];
+            populateData(allRoutes)
           }
         }
       })
