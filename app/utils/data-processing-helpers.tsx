@@ -22,7 +22,6 @@ export const flattenPlusAndMinusGrades = (grade: string): string => {
   if (grade.includes('+')) {
     // if grade is 5.9 or below, strings will always be 4 chars long, and there are no a - d modifier grades, so just remove the plus
     if (grade.length === 4) {
-      console.log('four')
       return grade.slice(0, -1)
     }
     // if grade is 5.10 or above, there are a - d modifier grades, so do some logic
