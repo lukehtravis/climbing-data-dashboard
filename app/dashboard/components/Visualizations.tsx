@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import MaxGradeChart from "./charts/MaxGrade";
 
 // We can define what this object will look like after we decide exactly what we want to pass in
 interface Props {
@@ -12,7 +13,8 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
   return (
     <div>
       <p>Successful upload! However, we dont have any processing functions yet. Once we do, visualizations will appear here after loading</p>
-      <p>{JSON.stringify(data)}</p>
+      
+      <MaxGradeChart data={data} />
     </div>
 
   );

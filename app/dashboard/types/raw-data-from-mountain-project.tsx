@@ -13,7 +13,8 @@ interface RawDataRow {
     "Route Type": string
     "Your Rating": string
     Length: string
-    "Rating Code": string
+    "Rating Code": string,
+    "Converted Grade": number
 }
 
 export type RawDataList = Array<RawDataRow>;

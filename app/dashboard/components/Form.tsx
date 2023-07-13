@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Papa, { ParseResult } from "papaparse";
 import RawDataRow, { RawDataList } from "../types/raw-data-from-mountain-project";
 import { mappingMpCodesToYdsGrades, eliminateSlashesFromGrades, flattenPlusAndMinusGrades, removeRiskRating } from "@/app/utils/data-processing-helpers";
+import { YDS_DICT } from "@/app/constants";
 
 interface Props {
   populateData: React.Dispatch<React.SetStateAction<RawDataList | null>>
@@ -40,7 +41,7 @@ const Form: React.FC<Props> = ({ populateData }: Props) => {
               element.Rating = eliminateSlashesFromGrades(element.Rating);
               element.Rating = flattenPlusAndMinusGrades(element.Rating);
               element.Rating = removeRiskRating(element.Rating);
-              console.log(element.Rating)
+              element["Converted Grade"] = YDS_DICT[element.Rating]
               // soundas: this seems a bit kludgy; TODO: how do I chain + assign concisely
             });
             const boulderOnlyNaive = resultsData.filter((oneRoute) => boulder.includes(oneRoute["Route Type"]) || boulderStyleNaive.includes(oneRoute["Style"]));

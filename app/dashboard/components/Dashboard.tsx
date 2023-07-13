@@ -10,6 +10,7 @@ const Dashboard: React.FC = () => {
   // the 'type' of data will either be RawDataList or Processed Row List. Still have to decide, based on which file we decide to process the data in, 
   // which is why it is any right now
   const [data, setData] = useState<any | null>(null);
+  console.log("dashboard: ", data)
   return (
     <div>
       {
