@@ -3,14 +3,13 @@
 import React, { useState } from 'react';
 import Form from './Form';
 import Visualizations from './Visualizations';
-import RawDataRow, {RawDataList} from '../types/raw-data-from-mountain-project';
+import {RawDataList} from '../types/raw-data-from-mountain-project';
 
 const Dashboard: React.FC = () => {
   // Set component state (data), and create a function to mutate our state (setData)
   // the 'type' of data will either be RawDataList or Processed Row List. Still have to decide, based on which file we decide to process the data in, 
   // which is why it is any right now
-  const [data, setData] = useState<any | null>(null);
-  console.log("dashboard: ", data)
+  const [data, setData] = useState<RawDataList | null>(null);
   return (
     <div>
       {
