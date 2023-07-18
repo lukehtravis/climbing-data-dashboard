@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import OnsightPercentage from "./OnsightPercentage";
+import OnsightPercentage from "./charts/OnsightPercentage";
 import MaxGradeChart from "./charts/MaxGrade";
 import { RawDataList } from "../types/raw-data-from-mountain-project";
 

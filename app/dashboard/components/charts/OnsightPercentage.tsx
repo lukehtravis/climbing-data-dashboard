@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import RawDataRow, { RawDataList } from "../types/raw-data-from-mountain-project";
+import RawDataRow, { RawDataList } from "../../types/raw-data-from-mountain-project";
 import * as d3 from 'd3';
 import { useEffect, useRef } from "react";
 
