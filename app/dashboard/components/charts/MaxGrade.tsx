@@ -4,6 +4,7 @@ import React, {useEffect, useRef} from "react";
 import {RawDataList} from '../../types/raw-data-from-mountain-project';
 import * as d3 from 'd3';
 import dateProcessor from "@/app/utils/date-grouper";
+import {YDS_ARRAY} from "@/app/constants";
 
 interface Props {
   data: RawDataList
@@ -11,7 +12,7 @@ interface Props {
 
 interface LineData {
     month: Date;
-    grade: number;
+    grade: string;
 }
 
 const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
@@ -20,7 +21,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   const height: number = 500
   const datesByMonth = dateProcessor(data)
   
-  // Convenience function to pass into xScale...We could get this form datesByMonth with some more work inside the function but this makes it look simpler below
+  // Convenience function to pass into xScale...We could get this from datesByMonth with some more work inside the function but this makes it look simpler below
   const dates:(Date)[] = data
     .map(row => d3.timeParse("%Y-%m-%d")(row.Date))
     .filter((date): date is Date => date !== null);
@@ -28,14 +29,16 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   // This takes our input data and organizes it in a way that will allow us to pass it into the d3.line() function
   const chartArray:LineData[] = datesByMonth.map(monthGroup => {
     let maxNumber = 0
+    let rating = ""
     monthGroup.dates.forEach(row => {
       if (row["Converted Grade"] > maxNumber) {
+        rating = row["Rating"]
         maxNumber = row["Converted Grade"]
       }
     })
     return {
       month: new Date(`${monthGroup.year}-${monthGroup.month}`), 
-      grade: maxNumber
+      grade: rating
     }   
     // After returning all these items, we use .filter to make sure that if any of the dates were messed up, we omit those because they will break the chart
   }).filter(groupedItem => groupedItem.month.getMonth())
@@ -44,7 +47,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     if (data.length === 0) return;
     
     // Sets margins
-    const margin = {top: 10, right: 30, bottom: 30, left: 60}
+    const margin = {top: 30, right: 30, bottom: 30, left: 30}
 
     // Does some funky react shit to grab the svg element and work with it from within the react component lifecycle
     const svg = d3.select(svgRef.current);
@@ -64,8 +67,8 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   
     // This thing takes in numbers representing grades and converts them to y coordinates on our svg canvas
     const yScale = d3
-      .scaleLinear()
-      .domain([0,34])
+      .scaleBand()
+      .domain(YDS_ARRAY)
       .range([height,0]);
 
     // Places the x axis
@@ -87,7 +90,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       .attr("stroke-width", 1.5)
       .attr("d", d3.line<LineData>()
         .x((chartArrayItem) => { return xScale(chartArrayItem.month) })
-        .y((chartArrayItem) => { return yScale(chartArrayItem.grade) })
+        .y((chartArrayItem) => { return yScale(chartArrayItem.grade) as number })
       )
   }, [data, height, width, dates, chartArray]);
   
