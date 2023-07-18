@@ -36,12 +36,6 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
     .data(justSport);
     // .join("rect").attr("x", (d: string) => x(d.Rating)).attr("y", d => y(d.Rating)).attr("height", d => y(0) - y(d.Rating)).attr("width", x.bandwidth());
 
-  svg.append("g")
-    .call(xAxis);
-
-  svg.append("g")
-    .call(yAxis);
-  svg.node();
   // In this file, we take in some of the processed data, and pass it into a series of vis charts we can create independently and import in here
   return (
     <div>
