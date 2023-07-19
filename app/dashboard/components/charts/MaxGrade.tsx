@@ -47,7 +47,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     if (data.length === 0) return;
     
     // Sets margins
-    const margin = {top: 30, right: 30, bottom: 30, left: 30}
+    const margin = {top: 30, right: 60, bottom: 30, left: 60}
 
     // Does some funky react shit to grab the svg element and work with it from within the react component lifecycle
     const svg = d3.select(svgRef.current);
@@ -56,8 +56,10 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     svg
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
+    const addedMargins = margin.left + margin.right
+    let chart = svg
       .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      .attr("transform", "translate(" + addedMargins + "," + margin.top + ")");
 
     // This thing takes in Date objects and converts them to x coordinates on our svg canvas
     const xScale = d3
@@ -72,26 +74,27 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       .range([height,0]);
 
     // Places the x axis
-    svg.append("g")
+    chart.append("g")
       .attr("class", "x-axis")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(xScale));
     
     // Places the y axis
-    svg.append("g")
+    chart.append("g")
       .attr("class", "y-axis")
-      .attr("transform", "translate("+ width + ", 0)")
       .call(d3.axisLeft(yScale));
 
-    svg.append("path")
+    chart.append("path")
       .datum(chartArray)
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
       .attr("d", d3.line<LineData>()
-        .x((chartArrayItem) => { return xScale(chartArrayItem.month) })
+        .x((chartArrayItem) => { return xScale(chartArrayItem.month) + 17 })
         .y((chartArrayItem) => { return yScale(chartArrayItem.grade) as number })
       )
+
+    // need to make chart axis start at correct place...the +17 is a hack to make it work for now
   }, [data, height, width, dates, chartArray]);
   
   return (
