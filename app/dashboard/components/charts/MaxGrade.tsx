@@ -22,7 +22,6 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   const width: number = 700
   const height: number = 500
   const dataFilteredByClimbingType = data.filter((oneRoute: RawDataRow) => oneRoute["Route Type"] === typeOfClimbing);
-  console.log(dataFilteredByClimbingType)
   const datesByMonth = dateProcessor(dataFilteredByClimbingType)
   
   // Convenience function to pass into xScale...We could get this from datesByMonth with some more work inside the function but this makes it look simpler below
@@ -114,7 +113,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   
   return (
     <div className="container">
-      <Dropdown options={["Sport", "Trad", "All"]} onChange={setTypeOfClimbing} />
+      <Dropdown options={["Sport", "Trad"]} onChange={setTypeOfClimbing} />
       <svg ref={svgRef}></svg>
     </div>
   );
