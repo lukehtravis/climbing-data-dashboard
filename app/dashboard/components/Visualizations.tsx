@@ -35,7 +35,7 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
     <div>
       <p>Successful upload! However, we dont have any processing functions yet. Once we do, visualizations will appear here after loading</p>
       
-      <MaxGradeChart data={sportClimbs} />
+      <MaxGradeChart data={data} />
     </div>
 
   );
