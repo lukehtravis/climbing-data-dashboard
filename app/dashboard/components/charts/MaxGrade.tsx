@@ -1,9 +1,10 @@
 "use client";
 
-import React, {useEffect, useRef} from "react";
-import {RawDataList} from '../../types/raw-data-from-mountain-project';
+import React, {useEffect, useRef, useState} from "react";
+import RawDataRow, {RawDataList} from '../../types/raw-data-from-mountain-project';
 import * as d3 from 'd3';
 import dateProcessor from "@/app/utils/date-grouper";
+import Dropdown from "../form-inputs/Dropdown";
 import {YDS_ARRAY} from "@/app/constants";
 
 interface Props {
@@ -16,13 +17,15 @@ interface LineData {
 }
 
 const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
+  const [typeOfClimbing, setTypeOfClimbing] = useState<string>("Sport");
   const svgRef = useRef<SVGSVGElement>(null);
   const width: number = 700
   const height: number = 500
-  const datesByMonth = dateProcessor(data)
+  const dataFilteredByClimbingType = data.filter((oneRoute: RawDataRow) => oneRoute["Route Type"] === typeOfClimbing);
+  const datesByMonth = dateProcessor(dataFilteredByClimbingType)
   
   // Convenience function to pass into xScale...We could get this from datesByMonth with some more work inside the function but this makes it look simpler below
-  const dates:(Date)[] = data
+  const dates:(Date)[] = dataFilteredByClimbingType
     .map(row => d3.timeParse("%Y-%m-%d")(row.Date))
     .filter((date): date is Date => date !== null);
 
@@ -52,13 +55,21 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     // Does some funky react shit to grab the svg element and work with it from within the react component lifecycle
     const svg = d3.select(svgRef.current);
 
-    // Designs the canvas and the axis locations
+    // Creates the canvas upon which we can draw svg things
     svg
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
+    
     const addedMargins = margin.left + margin.right
-    let chart = svg
+
+    // If line has already been drawn and user changes dropdown menu, erase existing line. 
+    // If no line has been drawn, this does nothing
+    d3.select(".inner-chart").remove();
+    
+    // Creates an inner box which will represent the actual drawn chart. We seperate this from the svg variable because it's necessary to do so to get axis margins to work with d3
+    const chart = svg
       .append("g")
+      .attr("class", "inner-chart")
       .attr("transform", "translate(" + addedMargins + "," + margin.top + ")");
 
     // This thing takes in Date objects and converts them to x coordinates on our svg canvas
@@ -84,21 +95,25 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       .attr("class", "y-axis")
       .call(d3.axisLeft(yScale));
 
+    // Draws the line for the chart
     chart.append("path")
       .datum(chartArray)
       .attr("fill", "none")
+      .attr("class", "chart-line")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
       .attr("d", d3.line<LineData>()
-        .x((chartArrayItem) => { return xScale(chartArrayItem.month) + 17 })
+        .x((chartArrayItem) => { return xScale(chartArrayItem.month) - xScale(chartArray[chartArray.length -1].month) })
         .y((chartArrayItem) => { return yScale(chartArrayItem.grade) as number })
       )
 
-    // need to make chart axis start at correct place...the +17 is a hack to make it work for now
-  }, [data, height, width, dates, chartArray]);
+    // it turned out the last item in the date array (which was the earliest date), was offset by negative 15 or so, skewing the chart to the left, 
+    // so we subtract it's value from the x value of every x data point and it fixes the chart. Still kind of hacky but an improvement
+  }, [data, height, width, dates, chartArray, typeOfClimbing]);
   
   return (
     <div className="container">
+      <Dropdown options={["Sport", "Trad"]} onChange={setTypeOfClimbing} />
       <svg ref={svgRef}></svg>
     </div>
   );
