@@ -1,0 +1,8 @@
+.chart-container {
+    position: relative;
+}
+
+.tooltip {
+    position: absolute;
+}
+

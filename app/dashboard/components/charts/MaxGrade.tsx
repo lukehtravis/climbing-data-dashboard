@@ -6,6 +6,7 @@ import * as d3 from 'd3';
 import dateProcessor from "@/app/utils/date-grouper";
 import Dropdown from "../form-inputs/Dropdown";
 import {YDS_ARRAY} from "@/app/constants";
+import './max-grade.css'
 
 interface Props {
   data: RawDataList
@@ -72,6 +73,12 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       .attr("class", "inner-chart")
       .attr("transform", "translate(" + addedMargins + "," + margin.top + ")");
 
+    // For tooltip, creates tooltip as a div sibling of our svg element in the html tree. 
+    // Bothsvg and tooltip sit directly under a parent div with class "chart-container"
+    const div = d3.select(".chart-container").append("div")	
+      .attr("class", "tooltip")			
+      .style("opacity", 1);
+
     // This thing takes in Date objects and converts them to x coordinates on our svg canvas
     const xScale = d3
       .scaleTime()
@@ -106,15 +113,31 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
         .x((chartArrayItem) => { return xScale(chartArrayItem.month) - xScale(chartArray[chartArray.length -1].month) })
         .y((chartArrayItem) => { return yScale(chartArrayItem.grade) as number })
       )
-
+      .on("mouseover", function(d) {	 
+        div.transition()		
+          .duration(200)		
+          .style("opacity", .9);		
+        div.html("<div>hi</div>")	
+          .style("left", (d3.pointer(d)[0]) + addedMargins + "px")		
+          .style("top", (d3.pointer(d)[1]) + margin.top + "px");	
+      })					
+      .on("mouseout", function(d) {		
+        div.transition()		
+        // .duration(500)		
+        // .style("opacity", 0);	
+      });
     // it turned out the last item in the date array (which was the earliest date), was offset by negative 15 or so, skewing the chart to the left, 
     // so we subtract it's value from the x value of every x data point and it fixes the chart. Still kind of hacky but an improvement
+
   }, [data, height, width, dates, chartArray, typeOfClimbing]);
   
   return (
     <div className="container">
       <Dropdown options={["Sport", "Trad"]} onChange={setTypeOfClimbing} />
-      <svg ref={svgRef}></svg>
+      <div className={`chart-container`}>
+        <svg ref={svgRef}></svg>
+      </div>
+      
     </div>
   );
 } 
