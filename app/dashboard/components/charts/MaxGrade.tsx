@@ -76,8 +76,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     // For tooltip, creates tooltip as a div sibling of our svg element in the html tree. 
     // Bothsvg and tooltip sit directly under a parent div with class "chart-container"
     const div = d3.select(".chart-container").append("div")	
-      .attr("class", "tooltip")			
-      .style("opacity", 1);
+      .attr("class", "tooltip")
 
     // This thing takes in Date objects and converts them to x coordinates on our svg canvas
     const xScale = d3
@@ -113,21 +112,34 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
         .x((chartArrayItem) => { return xScale(chartArrayItem.month) - xScale(chartArray[chartArray.length -1].month) })
         .y((chartArrayItem) => { return yScale(chartArrayItem.grade) as number })
       )
-      .on("mouseover", function(d) {	 
-        div.transition()		
-          .duration(200)		
-          .style("opacity", .9);		
-        div.html("<div>hi</div>")	
-          .style("left", (d3.pointer(d)[0]) + addedMargins + "px")		
-          .style("top", (d3.pointer(d)[1]) + margin.top + "px");	
-      })					
-      .on("mouseout", function(d) {		
-        div.transition()		
-        // .duration(500)		
-        // .style("opacity", 0);	
-      });
+
     // it turned out the last item in the date array (which was the earliest date), was offset by negative 15 or so, skewing the chart to the left, 
     // so we subtract it's value from the x value of every x data point and it fixes the chart. Still kind of hacky but an improvement
+
+    let circle = chart.selectAll(".circle")
+      .data(chartArray)
+
+    circle.enter()
+      .append("circle")
+      .attr("r", 3.5)
+      .attr("cx", (d) => {
+        return xScale(d.month) - xScale(chartArray[chartArray.length -1].month)
+      })
+      .attr("cy", (d) => {
+        return yScale(d.grade) as number
+      })  
+      .on("mouseenter", function(event, d) {
+        div		
+          .style("opacity", 1);		
+        div.html("<div>hi</div>")	
+          .style("left", (xScale(d.month) - xScale(chartArray[chartArray.length -1].month)) + addedMargins + "px")		
+          .style("top", (yScale(d.grade) as number) + margin.top + "px");	
+      })					
+      .on("mouseleave", function(d) {		
+        //div		
+        //.style("opacity", 0);	
+      });
+
 
   }, [data, height, width, dates, chartArray, typeOfClimbing]);
   
