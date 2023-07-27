@@ -19,14 +19,17 @@ interface LineData {
 
 const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   const [typeOfClimbing, setTypeOfClimbing] = useState<string>("Sport");
+  const [styleOfClimbing, setStyleOfClimbing] = useState<string>("Onsight");
   const svgRef = useRef<SVGSVGElement>(null);
   const width: number = 700
   const height: number = 500
   const dataFilteredByClimbingType = data.filter((oneRoute: RawDataRow) => oneRoute["Route Type"] === typeOfClimbing);
-  const datesByMonth = dateProcessor(dataFilteredByClimbingType)
+  // TODO: Need to come up with a solution for what to do when a route has no exlicit Lead Style set. Which style should we default to in that case
+  const dataFilteredByClimbingTypeAndStyle = dataFilteredByClimbingType.filter((oneRoute: RawDataRow) => oneRoute["Lead Style"] === styleOfClimbing);
+  const datesByMonth = dateProcessor(dataFilteredByClimbingTypeAndStyle)
   
   // Convenience function to pass into xScale...We could get this from datesByMonth with some more work inside the function but this makes it look simpler below
-  const dates:(Date)[] = dataFilteredByClimbingType
+  const dates:(Date)[] = dataFilteredByClimbingTypeAndStyle
     .map(row => d3.timeParse("%Y-%m-%d")(row.Date))
     .filter((date): date is Date => date !== null);
 
@@ -45,8 +48,9 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       grade: rating
     }   
     // After returning all these items, we use .filter to make sure that if any of the dates were messed up, we omit those because they will break the chart
-  }).filter(groupedItem => groupedItem.month.getMonth())
-  
+    // Gotta use !Number.isNaN here because if we just use groupedItem.month.getMonth() for our filter, it will return 0 for January, which is falsy, so it will be filtered out
+  }).filter(groupedItem => !Number.isNaN(groupedItem.month.getMonth()))
+
   useEffect(() => {
     if (data.length === 0) return;
     
@@ -66,6 +70,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     // If line has already been drawn and user changes dropdown menu, erase existing line. 
     // If no line has been drawn, this does nothing
     d3.select(".inner-chart").remove();
+    d3.select(".tooltip").remove();
     
     // Creates an inner box which will represent the actual drawn chart. We seperate this from the svg variable because it's necessary to do so to get axis margins to work with d3
     const chart = svg
@@ -112,32 +117,31 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
         .x((chartArrayItem) => { return xScale(chartArrayItem.month) - xScale(chartArray[chartArray.length -1].month) })
         .y((chartArrayItem) => { return yScale(chartArrayItem.grade) as number })
       )
-
     // it turned out the last item in the date array (which was the earliest date), was offset by negative 15 or so, skewing the chart to the left, 
     // so we subtract it's value from the x value of every x data point and it fixes the chart. Still kind of hacky but an improvement
 
-    let circle = chart.selectAll(".circle")
+    const circle = chart.selectAll(".circle")
       .data(chartArray)
 
     circle.enter()
       .append("circle")
-      .attr("r", 3.5)
+      .attr("r", 4)
       .attr("cx", (d) => {
-        return xScale(d.month) - xScale(chartArray[chartArray.length -1].month)
+        return xScale(d.month) - xScale(chartArray[chartArray.length - 1].month)
       })
       .attr("cy", (d) => {
         return yScale(d.grade) as number
       })  
-      .on("mouseenter", function(event, d) {
+      .on("mouseenter", (event, d) => {
         div		
           .style("opacity", 1);		
-        div.html("<div>hi</div>")	
+        div.html(`<div class="circle-text">${d.grade}</div>`)	
           .style("left", (xScale(d.month) - xScale(chartArray[chartArray.length -1].month)) + addedMargins + "px")		
           .style("top", (yScale(d.grade) as number) + margin.top + "px");	
       })					
-      .on("mouseleave", function(d) {		
-        //div		
-        //.style("opacity", 0);	
+      .on("mouseleave", (event, d) => {		
+        div		
+          .style("opacity", 0);	
       });
 
 
@@ -146,10 +150,17 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   return (
     <div className="container">
       <Dropdown options={["Sport", "Trad"]} onChange={setTypeOfClimbing} />
+      {
+        /* 
+          TODO: Currently, in the data category "Style" inside of the mountain project data, one of the options is TR. The other options are Follow Lead and Solo
+          However, Sport and Trad are listed as a "Type" of climbing, so we can't filter for toprope in our Type Dropdown.
+          Top rope is not a "Lead Style" either, however. It is simply a "Style". So we need to figure out how to filter for top-rope ideally without needing another dropdown just for it.
+       */
+      }
+      <Dropdown options={["Onsight", "Fell/Hung", "Redpoint"]} onChange={setStyleOfClimbing} />
       <div className={`chart-container`}>
         <svg ref={svgRef}></svg>
       </div>
-      
     </div>
   );
 } 
