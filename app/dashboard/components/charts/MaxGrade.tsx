@@ -48,7 +48,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       grade: rating
     }   
     // After returning all these items, we use .filter to make sure that if any of the dates were messed up, we omit those because they will break the chart
-    // Gotta use !Number.isNaN here because NaN is a number in javascript. Wat!
+    // Gotta use !Number.isNaN here because if we just use groupedItem.month.getMonth() for our filter, it will return 0 for January, which is falsy, so it will be filtered out
   }).filter(groupedItem => !Number.isNaN(groupedItem.month.getMonth()))
 
   useEffect(() => {
@@ -117,7 +117,6 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
         .x((chartArrayItem) => { return xScale(chartArrayItem.month) - xScale(chartArray[chartArray.length -1].month) })
         .y((chartArrayItem) => { return yScale(chartArrayItem.grade) as number })
       )
-
     // it turned out the last item in the date array (which was the earliest date), was offset by negative 15 or so, skewing the chart to the left, 
     // so we subtract it's value from the x value of every x data point and it fixes the chart. Still kind of hacky but an improvement
 
@@ -136,7 +135,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       .on("mouseenter", (event, d) => {
         div		
           .style("opacity", 1);		
-        div.html(`<div>${d.grade}</div>`)	
+        div.html(`<div class="circle-text">${d.grade}</div>`)	
           .style("left", (xScale(d.month) - xScale(chartArray[chartArray.length -1].month)) + addedMargins + "px")		
           .style("top", (yScale(d.grade) as number) + margin.top + "px");	
       })					
