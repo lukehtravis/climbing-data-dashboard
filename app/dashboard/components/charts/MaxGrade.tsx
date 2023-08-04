@@ -51,11 +51,12 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     // Gotta use !Number.isNaN here because if we just use groupedItem.month.getMonth() for our filter, it will return 0 for January, which is falsy, so it will be filtered out
   }).filter(groupedItem => !Number.isNaN(groupedItem.month.getMonth()))
 
+  // Sets margins
+  const margin = {top: 30, right: 60, bottom: 50, left: 20}
   useEffect(() => {
     if (data.length === 0) return;
     
-    // Sets margins
-    const margin = {top: 30, right: 60, bottom: 30, left: 60}
+    
 
     // Does some funky react shit to grab the svg element and work with it from within the react component lifecycle
     const svg = d3.select(svgRef.current);
@@ -144,7 +145,6 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
           .style("opacity", 0);	
       });
 
-
   }, [data, height, width, dates, chartArray, typeOfClimbing]);
   
   return (
@@ -159,6 +159,8 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       }
       <Dropdown options={["Onsight", "Fell/Hung", "Redpoint"]} onChange={setStyleOfClimbing} />
       <div className={`chart-container`}>
+        <div className="y-axis-label">Grade</div>
+        <div className="x-axis-label">Date</div>
         <svg ref={svgRef}></svg>
       </div>
     </div>
