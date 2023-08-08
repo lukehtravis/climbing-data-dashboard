@@ -4,6 +4,7 @@ import React from "react";
 import RawDataRow, { RawDataList } from "../../types/raw-data-from-mountain-project";
 import * as d3 from 'd3';
 import { useEffect, useRef } from "react";
+import { isTemplateExpression } from "typescript";
 
 // We can define what this object will look like after we decide exactly what we want to pass in
 interface Props {
@@ -37,26 +38,29 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
   const onsightSport = justSport.filter((oneRoute: RawDataRow) => onsightLeadStyle.includes(oneRoute["Lead Style"]));
   const groupAllSportByGrade = d3.rollup(justSport, d => d.length, (oneRoute: RawDataRow) => oneRoute.Rating);
   const groupOnsightSportByGrade = d3.rollup(onsightSport, d => d.length, (oneRoute: RawDataRow) => oneRoute.Rating);
-  console.log(groupAllSportByGrade);
-  console.log(groupOnsightSportByGrade);
-  const chartArray:LineData[] = groupAllSportByGrade.forEach((grade, count) => {
-    for (const [key, value] of groupOnsightSportByGrade) {
-      if (value == grade) {
-
-      }
+  // console.log(groupAllSportByGrade);
+  // console.log(groupOnsightSportByGrade);
+  const chartArray:LineData[] = [];
+  const item = groupAllSportByGrade.forEach((count, grade) => {
+    if (groupOnsightSportByGrade.get(grade)) {
+      chartArray.push ({
+        grade: grade,
+        percentage: groupOnsightSportByGrade.get(grade)/count * 100
+      })
     }
+    // else {
+    //   console.log("Luke didn't onsight this grade")
+    // }  
+  },
+  )
 
-  })
+  // console.log(chartArray)
   
   const margin = ({top: 20, right: 0, bottom: 30, left: 40}); 
 
   const svg = d3.select(svgRef.current);
-
-  // width = 460 - margin.left - margin.right, height = 400 - margin.top - margin.bottom;
-  // const x = d3.scaleBand().domain(justSport.map((oneRoute: RawDataRow) => oneRoute.Rating)).range([margin.left, width - margin.right]).padding(0.1);
-  // const xAxis = d3.axisBottom(x).tickSizeOuter(0);
   const x = d3
-    .scaleBand()
+    .scaleLinear().domain(d3.extent(chartArray, d => d.grade))
     .range([0, width]);
 
   const y = d3
@@ -72,6 +76,15 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
     .append("g")
     .attr("style", `max-width: ${width}px; height: auto; font: 10px sans-serif; overflow: visible;`);
 
+  svg.append("path")
+    .datum(chartArray)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 1.5)
+    .attr("d", d3.line<LineData>()
+      .x((chartArrayItem) => { return x(chartArrayItem.grade) })
+      .y((chartArrayItem) => { return y(chartArrayItem.percentage) })
+    )
   return (
     <div className="container">
       <svg ref={svgRef}></svg>
