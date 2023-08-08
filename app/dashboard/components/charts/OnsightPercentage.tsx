@@ -21,13 +21,6 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
   const width: number = 700
   const height: number = 500
 
-  // onsight_sport = just_sport.loc[just_sport["Lead Style"].isin(["Onsight", "Flash"])]
-  // group_all_sport_by_grade = just_sport.Rating.value_counts().rename_axis('Sport').copy()
-  // group_onsight_sport_by_grade = onsight_sport.Rating.value_counts().rename_axis('Onsight').copy() # count # of climbs for each grade
-
-  // combined = pd.concat([group_onsight_sport_by_grade, group_all_sport_by_grade], keys=["Onsight", "Sport"], axis=1, sort=False).fillna(0)
-  // combined.index.name = "Rating"
-  // combined["Onsight Percentage"] = combined["Onsight"]/combined["Sport"]*100
   // combined.index = combined.index.astype(cat_grade_order)
   // combined.sort_index(inplace=True)
 
