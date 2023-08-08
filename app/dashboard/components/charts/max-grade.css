@@ -1,0 +1,37 @@
+.chart-container {
+    position: relative;
+}
+
+.tooltip {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #333;
+    padding: 10px;
+}
+circle:hover {
+    fill: red;
+    cursor: pointer;
+}
+
+.x-axis-label {
+    position: absolute;
+    font-size: 16px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.x-axis-label {
+    position: absolute;
+    font-size: 16px;
+    bottom: 0;
+    left: 30%;
+}
+
+.y-axis-label {
+    position: absolute;
+    font-size: 16px;
+    transform: rotate(-90deg);
+    top: 40%;
+}
+
