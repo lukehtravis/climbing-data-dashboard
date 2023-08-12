@@ -70,18 +70,18 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
 
     // If line has already been drawn and user changes dropdown menu, erase existing line. 
     // If no line has been drawn, this does nothing
-    d3.select(".inner-chart").remove();
+    d3.select(".inner-chart-max-grade").remove();
     d3.select(".tooltip").remove();
     
     // Creates an inner box which will represent the actual drawn chart. We seperate this from the svg variable because it's necessary to do so to get axis margins to work with d3
     const chart = svg
       .append("g")
-      .attr("class", "inner-chart")
+      .attr("class", "inner-chart-max-grade")
       .attr("transform", "translate(" + addedMargins + "," + margin.top + ")");
 
     // For tooltip, creates tooltip as a div sibling of our svg element in the html tree. 
-    // Bothsvg and tooltip sit directly under a parent div with class "chart-container"
-    const div = d3.select(".chart-container").append("div")	
+    // Bothsvg and tooltip sit directly under a parent div with class "chart-container-max-grade"
+    const div = d3.select(".chart-container-max-grade").append("div")	
       .attr("class", "tooltip")
 
     // This thing takes in Date objects and converts them to x coordinates on our svg canvas
@@ -158,7 +158,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
        */
       }
       <Dropdown options={["Onsight", "Fell/Hung", "Redpoint"]} onChange={setStyleOfClimbing} />
-      <div className={`chart-container`}>
+      <div className={`chart-container-max-grade`}>
         <div className="y-axis-label">Grade</div>
         <div className="x-axis-label">Date</div>
         <svg ref={svgRef}></svg>

@@ -5,6 +5,8 @@ import RawDataRow, { RawDataList } from "../../types/raw-data-from-mountain-proj
 import * as d3 from 'd3';
 import { useEffect, useRef } from "react";
 import { YDS_SCALE } from "../../../constants"
+import './common.css'
+import './onsight.css' // hail mary, will redo this.. just getting something going
 
 // We can define what this object will look like after we decide exactly what we want to pass in
 interface Props {
@@ -44,7 +46,7 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
   )
   chartArray.sort((a,b) => YDS_SCALE.indexOf(a.grade) - YDS_SCALE.indexOf(b.grade))
 
-  console.log(chartArray)
+  // console.log(chartArray)
   
   const margin = {top: 10, right: 30, bottom: 30, left: 60}; 
 
@@ -52,14 +54,16 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
   svg
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
+
+  const actualChart = svg
     .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    .attr("class", "inner-chart-onsight")
+    .attr("transform", "translate(" + (margin.left + margin.right) + "," + margin.top + ")");
 
-  // const x = d3
-  //   .scaleLinear().domain(d3.extent(chartArray, d => d.grade))
-  //   .range([0, width]);
+  const div = d3.select(".chart-container-onsight").append("div")	
+    .attr("class", "tooltip")
 
-  const xScale = d3
+  const x = d3
     .scaleBand()
     .domain(YDS_SCALE.map(function(d) { return d; }))
     .range([0, width]);
@@ -69,31 +73,58 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
     .domain([0,100])
     .range([height,0]);
 
-  const yAxis = d3.axisLeft(y).ticks(null, "%")
-
-  svg.append("g")
+  actualChart.append("g")
     .attr("class", "x-axis")
     .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(xScale));
+    .call(d3.axisBottom(x));
 
-  svg.append("g")
+  actualChart.append("g")
     .attr("class", "y-axis")
-    .attr("transform", "translate("+ width + ", 0)")
+    // .attr("transform", "translate("+ width + ", 0)")
     .call(d3.axisLeft(y));
   
 
-  svg.append("path")
+  actualChart.append("path")
     .datum(chartArray)
     .attr("fill", "none")
     .attr("stroke", "steelblue")
     .attr("stroke-width", 2)
     .attr("d", d3.line<LineData>()
-      .x((chartArrayItem) => { return xScale(chartArrayItem.grade) })
+      .x((chartArrayItem) => { return x(chartArrayItem.grade) })
       .y((chartArrayItem) => { return y(chartArrayItem.percentage) })
     )
+
+  const circle = actualChart.selectAll(".circle")
+    .data(chartArray)
+
+  circle.enter()
+    .append("circle")
+    .attr("r", 4)
+    .attr("cx", (d) => {
+      return x(d.grade)
+    })
+    .attr("cy", (d) => {
+      return y(d.percentage)
+    })  
+    .on("mouseenter", (event, d) => {
+      div		
+        .style("opacity", 1);		
+      div.html(`<div class="circle-text">${d.grade}</div>`)	
+        .style("left", (x(d.grade)) + margin.left + margin.right + "px")		
+        .style("top", (y(d.percentage)) + margin.top + "px");	
+    })					
+    .on("mouseleave", (event, d) => {		
+      div		
+        .style("opacity", 0);	
+    });
+
   return (
     <div className="container">
-      <svg ref={svgRef}></svg>
+      <div className={`chart-container-onsight`}>
+        <div className="y-axis-label">Percentage</div>
+        <div className="x-axis-label">Grad</div>
+        <svg ref={svgRef}></svg>
+      </div>
     </div>
 
   );
