@@ -6,7 +6,7 @@ import * as d3 from 'd3';
 import { useEffect, useRef } from "react";
 import { YDS_SCALE } from "../../../constants"
 import './common.css'
-import './onsight.css' // hail mary, will redo this.. just getting something going
+import './onsight.css' 
 
 // We can define what this object will look like after we decide exactly what we want to pass in
 interface Props {
@@ -122,7 +122,7 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
     <div className="container">
       <div className={`chart-container-onsight`}>
         <div className="y-axis-label">Percentage</div>
-        <div className="x-axis-label">Grad</div>
+        <div className="x-axis-label">Grade</div>
         <svg ref={svgRef}></svg>
       </div>
     </div>
