@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import OnsightPercentage from "./charts/OnsightPercentage";
 import MaxGradeChart from "./charts/MaxGrade";
 import { RawDataList } from "../types/raw-data-from-mountain-project";
 
@@ -34,7 +35,7 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
   return (
     <div>
       <p>Successful upload! However, we dont have any processing functions yet. Once we do, visualizations will appear here after loading</p>
-      
+      <OnsightPercentage data={data}/>
       <MaxGradeChart data={data} />
     </div>
 
