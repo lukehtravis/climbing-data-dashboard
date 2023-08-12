@@ -1,3 +1,11 @@
 .chart-container-onsight {
     position: relative;
 }
+
+.tooltip {
+    padding: 5px;
+}
+circle:hover {
+    fill: rgb(0, 166, 255);
+    cursor: pointer;
+}
