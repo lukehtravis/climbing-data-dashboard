@@ -50,73 +50,78 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
   
   const margin = {top: 10, right: 30, bottom: 30, left: 60}; 
 
-  const svg = d3.select(svgRef.current);
-  svg
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+  useEffect(() => {
+    if (data.length === 0) return;
 
-  const actualChart = svg
-    .append("g")
-    .attr("class", "inner-chart-onsight")
-    .attr("transform", "translate(" + (margin.left + margin.right) + "," + margin.top + ")");
+    const svg = d3.select(svgRef.current);
+    svg
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
 
-  const div = d3.select(".chart-container-onsight").append("div")	
-    .attr("class", "tooltip")
+    const actualChart = svg
+      .append("g")
+      .attr("class", "inner-chart-onsight")
+      .attr("transform", "translate(" + (margin.left + margin.right) + "," + margin.top + ")");
 
-  const x = d3
-    .scaleBand()
-    .domain(YDS_SCALE.map(function(d) { return d; }))
-    .range([0, width]);
+    const div = d3.select(".chart-container-onsight").append("div")	
+      .attr("class", "tooltip")
 
-  const y = d3
-    .scaleLinear()
-    .domain([0,100])
-    .range([height,0]);
+    const x = d3
+      .scaleBand()
+      .domain(YDS_SCALE.map(function(d) { return d; }))
+      .range([0, width]);
 
-  actualChart.append("g")
-    .attr("class", "x-axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x));
+    const y = d3
+      .scaleLinear()
+      .domain([0,100])
+      .range([height,0]);
 
-  actualChart.append("g")
-    .attr("class", "y-axis")
-    // .attr("transform", "translate("+ width + ", 0)")
-    .call(d3.axisLeft(y));
-  
+    actualChart.append("g")
+      .attr("class", "x-axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
 
-  actualChart.append("path")
-    .datum(chartArray)
-    .attr("fill", "none")
-    .attr("stroke", "steelblue")
-    .attr("stroke-width", 2)
-    .attr("d", d3.line<LineData>()
-      .x((chartArrayItem) => { return x(chartArrayItem.grade) })
-      .y((chartArrayItem) => { return y(chartArrayItem.percentage) })
-    )
+    actualChart.append("g")
+      .attr("class", "y-axis")
+      // .attr("transform", "translate("+ width + ", 0)")
+      .call(d3.axisLeft(y));
+    
 
-  const circle = actualChart.selectAll(".circle")
-    .data(chartArray)
+    actualChart.append("path")
+      .datum(chartArray)
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 2)
+      .attr("d", d3.line<LineData>()
+        .x((chartArrayItem) => { return x(chartArrayItem.grade) })
+        .y((chartArrayItem) => { return y(chartArrayItem.percentage) })
+      )
 
-  circle.enter()
-    .append("circle")
-    .attr("r", 4)
-    .attr("cx", (d) => {
-      return x(d.grade)
-    })
-    .attr("cy", (d) => {
-      return y(d.percentage)
-    })  
-    .on("mouseenter", (event, d) => {
-      div		
-        .style("opacity", 1);		
-      div.html(`<div class="circle-text">${d.grade}</div>`)	
-        .style("left", (x(d.grade)) + margin.left + margin.right + "px")		
-        .style("top", (y(d.percentage)) + margin.top + "px");	
-    })					
-    .on("mouseleave", (event, d) => {		
-      div		
-        .style("opacity", 0);	
-    });
+    const circle = actualChart.selectAll(".circle")
+      .data(chartArray)
+
+    circle.enter()
+      .append("circle")
+      .attr("r", 4)
+      .attr("cx", (d) => {
+        return x(d.grade)
+      })
+      .attr("cy", (d) => {
+        return y(d.percentage)
+      })  
+      .on("mouseenter", (event, d) => {
+        div		
+          .style("opacity", 1);		
+        div.html(`<div class="circle-text">${d.grade}</div>`)	
+          .style("left", (x(d.grade)) + margin.left + margin.right + "px")		
+          .style("top", (y(d.percentage)) + margin.top + "px");	
+      })					
+      .on("mouseleave", (event, d) => {		
+        div		
+          .style("opacity", 0);	
+      });
+  }, [chartArray, data.length, margin.bottom, margin.left, margin.right, margin.top]);
+      
 
   return (
     <div className="container">
@@ -128,7 +133,7 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
     </div>
 
   );
-};
+}
 
 export default OnsightPercentage;
 
