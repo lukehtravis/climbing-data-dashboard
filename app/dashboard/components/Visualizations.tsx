@@ -34,7 +34,6 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
   // In this file, we take in some of the processed data, and pass it into a series of vis charts we can create independently and import in here
   return (
     <div>
-      <p>Successful upload! However, we dont have any processing functions yet. Once we do, visualizations will appear here after loading</p>
       <OnsightPercentage data={data}/>
       <MaxGradeChart data={data} />
     </div>

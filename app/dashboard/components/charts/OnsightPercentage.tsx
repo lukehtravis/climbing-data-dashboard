@@ -20,8 +20,8 @@ interface LineData {
 
 const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
-  const width: number = 1000
-  const height: number = 1000
+  const width: number = 700
+  const height: number = 500
 
   const sportStyleCombinations = ["Sport", "Sport, Alpine", "Trad", "TR", "Sport, TR"];
   const onsightLeadStyle = ["Onsight", "Flash"];
@@ -61,14 +61,16 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
     const actualChart = svg
       .append("g")
       .attr("class", "inner-chart-onsight")
-      .attr("transform", "translate(" + (margin.left + margin.right) + "," + margin.top + ")");
+      .attr("transform", "translate(" + (margin.left + margin.right - 15) + "," + margin.top + ")");
 
     const div = d3.select(".chart-container-onsight").append("div")	
       .attr("class", "tooltip")
 
+    const indexOfHighestGradeOnsight = YDS_SCALE.indexOf(chartArray[chartArray.length - 1].grade) + 1
+
     const x = d3
-      .scaleBand()
-      .domain(YDS_SCALE.map(function(d) { return d; }))
+      .scalePoint()
+      .domain(YDS_SCALE.slice(0, indexOfHighestGradeOnsight).map(function(d) { return d; }))
       .range([0, width]);
 
     const y = d3
