@@ -1,6 +1,9 @@
 "use client";
 
 import React from "react";
+import { Card, Grid, Box, CardContent, CardHeader } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material/styles';
 import OnsightPercentage from "./charts/OnsightPercentage";
 import MaxGradeChart from "./charts/MaxGrade";
 import { RawDataList } from "../types/raw-data-from-mountain-project";
@@ -9,6 +12,25 @@ import { RawDataList } from "../types/raw-data-from-mountain-project";
 interface Props {
   data: RawDataList
 }
+
+// IDK Luke, help
+function CustomCard() {
+  return (
+    <CustomCard>
+      styled(Card)`color: #20b2aa;`
+      {/* <div className='inner-wrapper'> ... </div> */}
+    </CustomCard>
+  )
+}
+
+// const customCard = styled(Card)`
+//   color: #20b2aa;
+// `;
+// // needs react-native
+// const Wrapper = styled.section`
+//   padding: 4em;
+//   background: papayawhip;
+// `;
 
 const Visualizations: React.FC<Props> = ({ data }: Props) => {
   let sportClimbs: RawDataList = []
@@ -33,11 +55,32 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
   }) : null
   // In this file, we take in some of the processed data, and pass it into a series of vis charts we can create independently and import in here
   return (
-    <div>
-      <OnsightPercentage data={data}/>
-      <MaxGradeChart data={data} />
-    </div>
-
+    // <Box sx={{ flexGrow: 1 }}>
+    <Box>
+      <Grid container spacing={5}>
+        <Grid item>
+          <Card title="Onsight Chart" raised> {/*  https://github.com/mui/material-ui/issues/27846 */}
+            <CardHeader disableTypography
+              title="Sport Climbs: Onsight Percentage"
+            />
+            <CardContent>
+              <OnsightPercentage data={data}/>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item>
+          <Card title="Max Grade Chart" raised>
+            <CardHeader disableTypography
+              title="Max Grade Over Time"
+              // subheader="Woot!" - maybe use titleTypographyProps
+            />
+            <CardContent>
+              <MaxGradeChart data={data} />
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 
