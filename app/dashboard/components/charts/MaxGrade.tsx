@@ -6,6 +6,7 @@ import * as d3 from 'd3';
 import dateProcessor from "@/app/utils/date-grouper";
 import Dropdown from "../form-inputs/Dropdown";
 import {YDS_ARRAY} from "@/app/constants";
+import './common.css'
 import './max-grade.css'
 
 interface Props {
