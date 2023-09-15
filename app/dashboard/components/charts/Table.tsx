@@ -4,6 +4,7 @@ import "gridjs/dist/theme/mermaid.css";
 import {RawDataList} from '../../types/raw-data-from-mountain-project';
 import {aggregatePitches} from '../../../utils/aggregators/aggregatePitches'
 import {countDates} from '../../../utils/aggregators/countDates'
+import {getAverageGrade} from '../../../utils/aggregators/getAverageGrade'
 import * as d3 from 'd3';
 import dateProcessor from "@/app/utils/date-grouper";
 import Dropdown from "../form-inputs/Dropdown";
@@ -36,11 +37,9 @@ Boulder
 */
 
 interface Props {
-    data: RawDataList,
+
     sport: RawDataList,
-    boulders: RawDataList,
-    tradClimbs: RawDataList,
-    topRope: RawDataList
+
 }
 
 // interface RawDataRow {
@@ -63,13 +62,13 @@ interface Props {
 // }
 
 
-const Table = ({data, sport, boulders, tradClimbs, topRope}:Props) => {
+const Table = ({sport}:Props) => {
   const wrapperRef = useRef(null);
   
-  const sportStats: any[] = [sport.length, aggregatePitches(sport), countDates(sport)]
+  const sportStats: any[] = [sport.length, aggregatePitches(sport), countDates(sport), getAverageGrade(sport)]
 
   const grid = new Grid({
-    columns: ['#Climbs', '#Pitches', 'Climbing Days'],
+    columns: ['#Climbs', '#Pitches', 'Climbing Days', 'Average Grade'],
     data: [sportStats]
   });
     

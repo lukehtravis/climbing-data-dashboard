@@ -1,11 +1,8 @@
-import React, {useEffect, useRef, useState} from "react";
-import { Grid } from "gridjs";
-import "gridjs/dist/theme/mermaid.css";
-import RawDataRow, {RawDataList} from '../../types/raw-data-from-mountain-project';
-import * as d3 from 'd3';
-import dateProcessor from "@/app/utils/date-grouper";
+import React, {useRef, useState} from "react";
+import {RawDataList} from '../../types/raw-data-from-mountain-project';
 import Dropdown from "../form-inputs/Dropdown";
-import {YDS_ARRAY} from "@/app/constants";
+import Table from './Table'
+
 
 // What do we want in this table
 
@@ -34,11 +31,12 @@ Boulder
 */
 
 interface Props {
-    data: RawDataList,
+  compartmentalizedData: {
     sport: RawDataList,
     boulders: RawDataList,
-    tradClimbs: RawDataList,
-    topRope: RawDataList
+    trad: RawDataList,
+    TR: RawDataList
+  }
 }
 
 interface RawDataRow {
@@ -61,22 +59,16 @@ interface RawDataRow {
 }
 
 
-const Tables = ({data, sport, boulders, tradClimbs, topRope}:Props) => {
+const Tables = ({compartmentalizedData}:Props) => {
   const wrapperRef = useRef(null);
+  const [climbingTypeToShow, setClimbingTypeToShow] = useState("all")
   
-  const grid = new Grid({
-    columns: ['Name', 'Email', 'Phone Number'],
-    data: [
-      ['John', 'john@example.com', '(353) 01 222 3333'],
-      ['Mark', 'mark@gmail.com',   '(01) 22 888 4444']
-    ]
-  });
-    
-  useEffect(() => {
-    grid.render(wrapperRef.current as unknown as Element);
-  });
-    
-  return <div ref={wrapperRef} />;
+  return (
+    <div>
+
+      <Table sport={compartmentalizedData.sport} />
+    </div>
+  );
 }
 
 export default Tables
