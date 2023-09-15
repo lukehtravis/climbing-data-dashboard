@@ -7,6 +7,7 @@ import { styled } from '@mui/material/styles';
 import OnsightPercentage from "./charts/OnsightPercentage";
 import MaxGradeChart from "./charts/MaxGrade";
 import { RawDataList } from "../types/raw-data-from-mountain-project";
+import Table from "./charts/Table"
 
 // We can define what this object will look like after we decide exactly what we want to pass in
 interface Props {
@@ -53,10 +54,12 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
       break;
     }
   }) : null
+  console.log(data)
   // In this file, we take in some of the processed data, and pass it into a series of vis charts we can create independently and import in here
   return (
     // <Box sx={{ flexGrow: 1 }}>
     <Box>
+      <Table data={data} sport={sportClimbs} boulders={boulders} tradClimbs={tradClimbs} topRope={topRope} />
       <Grid container spacing={5}>
         <Grid item>
           <Card title="Onsight Chart" raised> {/*  https://github.com/mui/material-ui/issues/27846 */}
