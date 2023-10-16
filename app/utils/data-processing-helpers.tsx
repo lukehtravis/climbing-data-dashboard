@@ -40,6 +40,19 @@ export const flattenPlusAndMinusGrades = (grade: string): string => {
   return grade
 }
 
+export const cleanBoulderGrades = () => {
+//  V3-4
+//  V0-1
+//  V2
+//  V1+
+//  V0
+//  V1+
+//  V-easy
+//  V2 R
+//  V1-2 PG13
+// create function to ignore all plus and minus and danger ratings and just get raw numbers
+}
+
 export const removeRiskRating = (grade: string): string => {
   let riskFactors = ['PG13', 'R', 'X'];
   for (let item of riskFactors) {

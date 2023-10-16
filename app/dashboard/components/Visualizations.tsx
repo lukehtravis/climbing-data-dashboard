@@ -7,7 +7,7 @@ import { styled } from '@mui/material/styles';
 import OnsightPercentage from "./charts/OnsightPercentage";
 import MaxGradeChart from "./charts/MaxGrade";
 import { RawDataList } from "../types/raw-data-from-mountain-project";
-import Tables from "./charts/Tables"
+import CounterTables from "./charts/CounterTables"
 
 // We can define what this object will look like after we decide exactly what we want to pass in
 interface Props {
@@ -38,19 +38,23 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
   let boulders: RawDataList = []
   let tradClimbs: RawDataList = []
   let topRope: RawDataList = []
+  let allRoped: RawDataList = []
   data ? data.forEach(row => {
     switch (row["Route Type"]) {
     case "Sport": 
       sportClimbs.push(row)
+      allRoped.push(row)
       break;
     case "Boulder":
       boulders.push(row)
       break;
     case "Trad":
       tradClimbs.push(row)
+      allRoped.push(row)
       break;
     case "Top-Rope":
       topRope.push(row)
+      allRoped.push(row)
       break;
     }
   }) : null
@@ -58,7 +62,7 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
   return (
     // <Box sx={{ flexGrow: 1 }}>
     <Box>
-      <Tables compartmentalizedData={{sport: sportClimbs, boulders: boulders, trad: tradClimbs, TR: topRope}} />
+      <CounterTables compartmentalizedData={{sport: sportClimbs, boulders: boulders, trad: tradClimbs, TR: topRope, all: data}} />
       <Grid container spacing={5}>
         <Grid item>
           <Card title="Onsight Chart" raised> {/*  https://github.com/mui/material-ui/issues/27846 */}
