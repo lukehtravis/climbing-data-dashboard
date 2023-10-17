@@ -65,7 +65,7 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
       <CounterTables compartmentalizedData={{sport: sportClimbs, boulders: boulders, trad: tradClimbs, TR: topRope, all: data}} />
       <Grid container spacing={5}>
         <Grid item>
-          <Card title="Onsight Chart" raised> {/*  https://github.com/mui/material-ui/issues/27846 */}
+          <Card raised> {/*  https://github.com/mui/material-ui/issues/27846 */}
             <CardHeader disableTypography
               title="Sport Climbs: Onsight Percentage"
             />
@@ -75,7 +75,7 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
           </Card>
         </Grid>
         <Grid item>
-          <Card title="Max Grade Chart" raised>
+          <Card raised>
             <CardHeader disableTypography
               title="Max Grade Over Time"
               // subheader="Woot!" - maybe use titleTypographyProps

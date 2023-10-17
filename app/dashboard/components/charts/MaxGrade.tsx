@@ -57,8 +57,6 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   useEffect(() => {
     if (data.length === 0) return;
     
-    
-
     // Does some funky react shit to grab the svg element and work with it from within the react component lifecycle
     const svg = d3.select(svgRef.current);
 
@@ -78,12 +76,13 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     const chart = svg
       .append("g")
       .attr("class", "inner-chart-max-grade")
-      .attr("transform", "translate(" + addedMargins + "," + margin.top + ")");
+      .attr("transform", "translate(" + 67 + "," + margin.top + ")");
 
     // For tooltip, creates tooltip as a div sibling of our svg element in the html tree. 
     // Bothsvg and tooltip sit directly under a parent div with class "chart-container-max-grade"
     const div = d3.select(".chart-container-max-grade").append("div")	
       .attr("class", "tooltip")
+      .style("opacity", "0")
 
     // This thing takes in Date objects and converts them to x coordinates on our svg canvas
     const xScale = d3
