@@ -52,10 +52,10 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
       tradClimbs.push(row)
       allRoped.push(row)
       break;
-    case "Top-Rope":
+    }
+    if (row["Style"] === "TR") {
       topRope.push(row)
       allRoped.push(row)
-      break;
     }
   }) : null
   // In this file, we take in some of the processed data, and pass it into a series of vis charts we can create independently and import in here

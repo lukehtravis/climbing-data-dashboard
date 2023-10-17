@@ -64,10 +64,10 @@ const CounterTables = ({compartmentalizedData}:Props) => {
   const sport: any[] = ["sport", compartmentalizedData['sport'].length, aggregatePitches(compartmentalizedData['sport']), countDates(compartmentalizedData.sport), getAverageGrade(compartmentalizedData.sport)]
   const trad: any[] = ["trad", compartmentalizedData['trad'].length, aggregatePitches(compartmentalizedData['trad']), countDates(compartmentalizedData.trad), getAverageGrade(compartmentalizedData.trad)]
   const boulders: any[] = ["boulders", compartmentalizedData['boulders'].length, aggregatePitches(compartmentalizedData['boulders']), countDates(compartmentalizedData.boulders), /*getAverageBoulderGrade(compartmentalizedData.boulders)*/ "TODO"]
-  const topRope: any[] = ["top-rope: TODO", compartmentalizedData['TR'].length, aggregatePitches(compartmentalizedData['TR']), countDates(compartmentalizedData.TR), /* getAverageGrade(compartmentalizedData.TR)*/"0" ]
-  const all: any[] = ["all", compartmentalizedData['all'].length, aggregatePitches(compartmentalizedData['all']), countDates(compartmentalizedData.all), "N/A"]
+  const topRope: any[] = ["top-rope", compartmentalizedData['TR'].length, aggregatePitches(compartmentalizedData['TR']), countDates(compartmentalizedData.TR), getAverageGrade(compartmentalizedData.TR) ]
   const ropedOnly = [...compartmentalizedData['trad'], ...compartmentalizedData['sport'], ...compartmentalizedData['TR']]
   const allRoped: any[] = ["all-roped", ropedOnly.length,aggregatePitches(ropedOnly), countDates(ropedOnly), getAverageGrade(ropedOnly)]
+  const all: any[] = ["all", compartmentalizedData['all'].length, aggregatePitches(compartmentalizedData['all']), countDates(compartmentalizedData.all), "N/A"]
   const data = [sport, trad, boulders, topRope, allRoped, all]
   return (
     <div>

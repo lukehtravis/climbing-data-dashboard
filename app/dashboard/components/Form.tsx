@@ -36,7 +36,7 @@ const Form: React.FC<Props> = ({ populateData }: Props) => {
           if (results.errors.length === 0) {
             const resultsData: RawDataList = results.data
             // process here, Luke said
-            const ropedOnlyNaive = resultsData.filter((oneRoute) => roped.includes(oneRoute["Route Type"]));
+            const ropedOnlyNaive = resultsData.filter((oneRoute) => roped.includes(oneRoute["Route Type"]) || oneRoute["Style"] === "TR");
             ropedOnlyNaive.forEach(element => {
               element.Rating = eliminateSlashesFromGrades(element.Rating);
               element.Rating = flattenPlusAndMinusGrades(element.Rating);
