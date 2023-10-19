@@ -5,7 +5,9 @@ import RawDataRow, {RawDataList} from '../../types/raw-data-from-mountain-projec
 import * as d3 from 'd3';
 import dateProcessor from "@/app/utils/date-grouper";
 import Dropdown from "../form-inputs/Dropdown";
+import DatePicker from "../form-inputs/DatePicker";
 import {YDS_ARRAY} from "@/app/constants";
+import { dateIsInRange } from "../../../utils/dateIsInRange";
 import './common.css'
 import './max-grade.css'
 
@@ -14,23 +16,38 @@ interface Props {
 }
 
 interface LineData {
-    month: Date;
-    grade: string;
+  month: Date;
+  grade: string;
+}
+
+interface DateRange {
+  fromDate?: string;
+  toDate?: string;
 }
 
 const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   const [typeOfClimbing, setTypeOfClimbing] = useState<string>("Sport");
   const [styleOfClimbing, setStyleOfClimbing] = useState<string>("Onsight");
+  const [fromDate, setFromDate] = useState<string>("")
+  const [toDate, setToDate] = useState<string>("")
   const svgRef = useRef<SVGSVGElement>(null);
   const width: number = 700
   const height: number = 500
-  const dataFilteredByClimbingType = data.filter((oneRoute: RawDataRow) => oneRoute["Route Type"] === typeOfClimbing);
+  const dataFilteredByClimbingType = data.filter((oneRoute: RawDataRow) => {
+    const filteredResult:RawDataRow[] = []
+    // use the below logic if we have received a time range
+    if (fromDate && toDate) {
+      return (dateIsInRange(new Date(fromDate), new Date(toDate), new Date(oneRoute.Date)) && oneRoute["Route Type"] === typeOfClimbing && oneRoute["Lead Style"] === styleOfClimbing)
+    }
+    // use the below logic if we have no time range
+    return (oneRoute["Route Type"] === typeOfClimbing && oneRoute["Lead Style"] === styleOfClimbing)
+  });
   // TODO: Need to come up with a solution for what to do when a route has no exlicit Lead Style set. Which style should we default to in that case
-  const dataFilteredByClimbingTypeAndStyle = dataFilteredByClimbingType.filter((oneRoute: RawDataRow) => oneRoute["Lead Style"] === styleOfClimbing);
-  const datesByMonth = dateProcessor(dataFilteredByClimbingTypeAndStyle)
+  // const dataFilteredByClimbingTypeAndStyle = dataFilteredByClimbingType.filter((oneRoute: RawDataRow) => oneRoute["Lead Style"] === styleOfClimbing);
+  const datesByMonth = dateProcessor(dataFilteredByClimbingType)
   
-  // Convenience function to pass into xScale...We could get this from datesByMonth with some more work inside the function but this makes it look simpler below
-  const dates:(Date)[] = dataFilteredByClimbingTypeAndStyle
+  // Convenience function eliminating broken dates, allowing us to pass the dates into xScale...We could get this from datesByMonth with some more work inside the function but this makes it look simpler below
+  const dates:(Date)[] = dataFilteredByClimbingType
     .map(row => d3.timeParse("%Y-%m-%d")(row.Date))
     .filter((date): date is Date => date !== null);
 
@@ -149,15 +166,20 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   
   return (
     <div className="container">
-      <Dropdown options={["Sport", "Trad"]} onChange={setTypeOfClimbing} />
-      {
+      <div className="dropdown-menus">
+        <Dropdown options={["Sport", "Trad"]} onChange={setTypeOfClimbing} />
+        {
         /* 
           TODO: Currently, in the data category "Style" inside of the mountain project data, one of the options is TR. The other options are Follow Lead and Solo
           However, Sport and Trad are listed as a "Type" of climbing, so we can't filter for toprope in our Type Dropdown.
           Top rope is not a "Lead Style" either, however. It is simply a "Style". So we need to figure out how to filter for top-rope ideally without needing another dropdown just for it.
        */
-      }
-      <Dropdown options={["Onsight", "Fell/Hung", "Redpoint"]} onChange={setStyleOfClimbing} />
+        }
+        <Dropdown options={["Onsight", "Fell/Hung", "Redpoint"]} onChange={setStyleOfClimbing} />
+        <DatePicker date={fromDate} setDate={setFromDate} />
+        <DatePicker date={toDate} setDate={setToDate} />
+      </div>
+
       <div className={`chart-container-max-grade`}>
         <div className="y-axis-label">Grade</div>
         <div className="x-axis-label">Date</div>
