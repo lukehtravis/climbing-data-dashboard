@@ -29,6 +29,18 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
   const onsightSport = justSport.filter((oneRoute: RawDataRow) => onsightLeadStyle.includes(oneRoute["Lead Style"]));
   const groupAllSportByGrade = d3.rollup(justSport, d => d.length, (oneRoute: RawDataRow) => oneRoute.Rating);
   const groupOnsightSportByGrade = d3.rollup(onsightSport, d => d.length, (oneRoute: RawDataRow) => oneRoute.Rating);
+  let mogo = [
+    { name: "ABC", amount: "34.0", date: "11/12/2019" },
+    { name: "DEF", amount: "120.11", date: "11/02/2020" },
+    { name: "MNO", amount: "12.01", date: "01/04/2020" },
+    { name: "DEF", amount: "34.05", date: "03/04/2020" }
+  ]
+ 
+  const gfg = d3.rollup(mogo, g => g.length, d => d.name, d => d.date);
+ 
+  console.log(gfg);
+  console.log(gfg.get("ABC"))
+
   // console.log(groupAllSportByGrade)
   // console.log(groupOnsightSportByGrade)
   const chartArray:LineData[] = [];

@@ -14,22 +14,34 @@ interface Props {
 }
 
 interface LineData {
-    month: Date;
-    grade: string;
+  month: Date;
+  grade: string;
+}
+
+interface DateRange {
+  fromDate?: Date;
+  toDate?: Date;
 }
 
 const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   const [typeOfClimbing, setTypeOfClimbing] = useState<string>("Sport");
   const [styleOfClimbing, setStyleOfClimbing] = useState<string>("Onsight");
+  const [dateRange, setDateRange] = useState<DateRange>({})
   const svgRef = useRef<SVGSVGElement>(null);
   const width: number = 700
   const height: number = 500
-  const dataFilteredByClimbingType = data.filter((oneRoute: RawDataRow) => oneRoute["Route Type"] === typeOfClimbing);
+  const dataFilteredByClimbingType = data.filter((oneRoute: RawDataRow) => {
+    const filteredResult:RawDataRow[] = []
+    if (dateRange.fromDate && dateRange.toDate) {
+
+    }
+    oneRoute["Route Type"] === typeOfClimbing
+  });
   // TODO: Need to come up with a solution for what to do when a route has no exlicit Lead Style set. Which style should we default to in that case
   const dataFilteredByClimbingTypeAndStyle = dataFilteredByClimbingType.filter((oneRoute: RawDataRow) => oneRoute["Lead Style"] === styleOfClimbing);
   const datesByMonth = dateProcessor(dataFilteredByClimbingTypeAndStyle)
   
-  // Convenience function to pass into xScale...We could get this from datesByMonth with some more work inside the function but this makes it look simpler below
+  // Convenience function eliminating broken dates, allowing us to pass the dates into xScale...We could get this from datesByMonth with some more work inside the function but this makes it look simpler below
   const dates:(Date)[] = dataFilteredByClimbingTypeAndStyle
     .map(row => d3.timeParse("%Y-%m-%d")(row.Date))
     .filter((date): date is Date => date !== null);
