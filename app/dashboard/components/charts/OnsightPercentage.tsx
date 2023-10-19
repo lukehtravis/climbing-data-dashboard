@@ -35,11 +35,6 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
     { name: "MNO", amount: "12.01", date: "01/04/2020" },
     { name: "DEF", amount: "34.05", date: "03/04/2020" }
   ]
- 
-  const gfg = d3.rollup(mogo, g => g.length, d => d.name, d => d.date);
- 
-  console.log(gfg);
-  console.log(gfg.get("ABC"))
 
   // console.log(groupAllSportByGrade)
   // console.log(groupOnsightSportByGrade)
