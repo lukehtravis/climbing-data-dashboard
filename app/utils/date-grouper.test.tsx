@@ -1,4 +1,4 @@
-import RawDataRow, { RawDataList } from "../dashboard/types/raw-data-from-mountain-project";
+import { RawDataList } from "../dashboard/types/raw-data-from-mountain-project";
 
 interface GroupedMonth {
     month: string,
@@ -26,5 +26,3 @@ const dateProcessor = (data: RawDataList): GroupedMonth[] => {
     return groupedMonth;
   });
 }
-
-export default dateProcessor;
