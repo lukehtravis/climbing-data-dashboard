@@ -62,7 +62,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       }
     })
     return {
-      month: new Date(`${monthGroup.year}-${monthGroup.month}`), 
+      month: new Date(`${monthGroup.year}-${monthGroup.month}-01 00:00:00`), 
       grade: rating
     }   
     // After returning all these items, we use .filter to make sure that if any of the dates were messed up, we omit those because they will break the chart
@@ -101,10 +101,21 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       .attr("class", "tooltip")
       .style("opacity", "0")
 
+    // We want a modified min date. What was happening before was that we had set XScale to be based off earliest date in the list of dates
+    // but we were packaging up dates by month in dateProcessor, and then re-creating date objects via month later on,
+    // and this was causing the map to be skewed left, because the dates we would re-create at the first of the month would often be earlier 
+    // than the earliest date that would be present in the data. Here we account for that
+    // TODO - Since getUTCMonth is zero-index(lame), we need to create some logic to make sure it behaves well when we get january (invalid date entry)
+    // Will need to update the month to twelve in that case, and icnrement back the year one value
+    const min = d3.min(dates)
+    // this is zero indexed, but we don't want to add one because we actually want the previous month to accomodate above problem
+    const minMonth = min?.getUTCMonth() as number
+    const minYear = min?.getUTCFullYear()
+    const newMin = new Date(`${minYear}-${minMonth}-01 00:00:00`)
     // This thing takes in Date objects and converts them to x coordinates on our svg canvas
     const xScale = d3
       .scaleTime()
-      .domain(d3.extent(dates) as unknown as [Date, Date])
+      .domain([newMin, d3.max(dates)] as [Date, Date])
       .range([0, width]);
   
     // This thing takes in numbers representing grades and converts them to y coordinates on our svg canvas
@@ -132,11 +143,9 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
       .attr("d", d3.line<LineData>()
-        .x((chartArrayItem) => { return xScale(chartArrayItem.month) - xScale(chartArray[chartArray.length -1].month) })
+        .x((chartArrayItem) => { return xScale(chartArrayItem.month) })
         .y((chartArrayItem) => { return yScale(chartArrayItem.grade) as number })
       )
-    // it turned out the last item in the date array (which was the earliest date), was offset by negative 15 or so, skewing the chart to the left, 
-    // so we subtract it's value from the x value of every x data point and it fixes the chart. Still kind of hacky but an improvement
 
     const circle = chart.selectAll(".circle")
       .data(chartArray)
@@ -145,7 +154,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       .append("circle")
       .attr("r", 4)
       .attr("cx", (d) => {
-        return xScale(d.month) - xScale(chartArray[chartArray.length - 1].month)
+        return xScale(d.month) 
       })
       .attr("cy", (d) => {
         return yScale(d.grade) as number
@@ -154,7 +163,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
         div		
           .style("opacity", 1);		
         div.html(`<div class="circle-text">${d.grade}</div>`)	
-          .style("left", (xScale(d.month) - xScale(chartArray[chartArray.length -1].month)) + addedMargins + "px")		
+          .style("left", (xScale(d.month)) + addedMargins + "px")		
           .style("top", (yScale(d.grade) as number) + margin.top + "px");	
       })					
       .on("mouseleave", (event, d) => {		
