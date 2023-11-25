@@ -65,6 +65,8 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
 
+    d3.select(".inner-chart-max-grade").remove();
+
     const actualChart = svg
       .append("g")
       .attr("class", "inner-chart-onsight")

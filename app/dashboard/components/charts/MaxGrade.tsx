@@ -87,7 +87,9 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     // If line has already been drawn and user changes dropdown menu, erase existing line. 
     // If no line has been drawn, this does nothing
     d3.select(".inner-chart-max-grade").remove();
-    d3.select(".tooltip").remove();
+
+    // removing this line: since the onsight chart is added first, this line removes the tooltip div from that chart
+    // d3.select(".tooltip").remove();
     
     // Creates an inner box which will represent the actual drawn chart. We seperate this from the svg variable because it's necessary to do so to get axis margins to work with d3
     const chart = svg
