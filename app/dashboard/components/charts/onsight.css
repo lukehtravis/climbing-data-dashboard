@@ -3,7 +3,10 @@
 }
 
 .tooltip {
-    padding: 5px;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #333;
+    padding: 10px;
 }
 circle:hover {
     fill: rgb(0, 166, 255);

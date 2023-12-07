@@ -121,14 +121,18 @@ const OnsightPercentage: React.FC<Props> = ({ data }: Props) => {
         return y(d.percentage)
       })  
       .on("mouseenter", (event, d) => {
-        div		
+        div.transition()
+              .duration(500)
+              .style("opacity", 1)		
           .style("opacity", 1);		
         div.html(`<div class="circle-text">${d.grade}</div>`)	
           .style("left", (x(d.grade)) + margin.left + margin.right + "px")		
           .style("top", (y(d.percentage)) + margin.top + "px");	
       })					
-      .on("mouseleave", (event, d) => {		
-        div		
+      .on("mouseleave", (event, d) => {			
+        div.transition()
+              .duration(500)
+              .style("opacity", 1)
           .style("opacity", 0);	
       });
   }, [chartArray, data.length, margin.bottom, margin.left, margin.right, margin.top]);
