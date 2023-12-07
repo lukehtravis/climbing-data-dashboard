@@ -162,15 +162,17 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
         return yScale(d.grade) as number
       })  
       .on("mouseenter", (event, d) => {
-        div		
-          .style("opacity", 1);		
+        div.transition()
+              .duration(500)
+              .style("opacity", 1)
         div.html(`<div class="circle-text">${d.grade}</div>`)	
           .style("left", (xScale(d.month)) + addedMargins + "px")		
           .style("top", (yScale(d.grade) as number) + margin.top + "px");	
       })					
       .on("mouseleave", (event, d) => {		
-        div		
-          .style("opacity", 0);	
+        div.transition()
+              .duration(500) 		
+              .style("opacity", 0)
       });
 
   }, [data, height, width, dates, chartArray, typeOfClimbing]);

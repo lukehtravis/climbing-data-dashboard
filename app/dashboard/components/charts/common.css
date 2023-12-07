@@ -1,9 +1,10 @@
 .tooltip {
     position: absolute;
     background-color: #fff;
-    border: 1px solid #333;
+    border: 10px solid #333;
     padding: 10px;
 }
+
 circle:hover {
     fill: red;
     cursor: pointer;
