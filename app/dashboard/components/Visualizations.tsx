@@ -4,6 +4,7 @@ import React from "react";
 import { Box, CardHeader } from '@mui/material';
 import OnsightPercentage from "./charts/OnsightPercentage";
 import MaxGradeChart from "./charts/MaxGrade";
+import Card from "./Card";
 import { RawDataList } from "../types/raw-data-from-mountain-project";
 import CounterTables from "./charts/CounterTables"
 import styles from "./visualizations.module.css"
@@ -42,12 +43,14 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
     // <Box sx={{ flexGrow: 1 }}>
     <Box>
       <CounterTables compartmentalizedData={{sport: sportClimbs, boulders: boulders, trad: tradClimbs, TR: topRope, all: data}} />
-      <CardHeader disableTypography
-        title="Sport Climbs: Onsight Percentage"
-      />
+      
       <div className={`${styles['line-charts']}`}>
-        <OnsightPercentage data={data}/>
-        <MaxGradeChart data={data} />
+        <Card>
+          <OnsightPercentage data={data}/>
+        </Card>
+        <Card>
+          <MaxGradeChart data={data} />
+        </Card>
       </div>
     </Box>
   );

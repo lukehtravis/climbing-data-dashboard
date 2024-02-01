@@ -31,8 +31,6 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   const [fromDate, setFromDate] = useState<string>("")
   const [toDate, setToDate] = useState<string>("")
   const svgRef = useRef<SVGSVGElement>(null);
-  const width: number = 700
-  const height: number = 500
 
   useEffect(() => {
     if (data.length === 0) return;
@@ -71,22 +69,22 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     // Gotta use !Number.isNaN here because if we just use groupedItem.month.getMonth() for our filter, it will return 0 for January, which is falsy, so it will be filtered out
     }).filter(groupedItem => !Number.isNaN(groupedItem.month.getMonth()))
 
-    // Sets margins
-    const margin = {top: 30, right: 60, bottom: 50, left: 20}
+    const margin = { top: 30, right: 60, bottom: 50, left: 60 };
+    const width = 960 - margin.left - margin.right; // Virtual width for drawing purposes
+    const height = 500 - margin.top - margin.bottom; // Virtual height for drawing purposes
     
     // Does some funky react shit to grab the svg element and work with it from within the react component lifecycle
-    const svg = d3.select(svgRef.current);
-
-    // Creates the canvas upon which we can draw svg things
-    svg
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-    
-    const addedMargins = margin.left + margin.right
+    const svg = d3.select(svgRef.current)
+      .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet');
 
     // If line has already been drawn and user changes dropdown menu, erase existing line. 
     // If no line has been drawn, this does nothing
-    d3.select(".inner-chart-max-grade").remove();
+    console.log("circles", d3.select(".circle"))
+    d3.selectAll(".circle").remove();
+    d3.select(".chart-line").remove();
+    d3.select(".y-axis").remove();
+    d3.select(".x-axis").remove();
 
     // removing this line: since the onsight chart is added first, this line removes the tooltip div from that chart
     // d3.select(".tooltip").remove();
@@ -94,8 +92,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     // Creates an inner box which will represent the actual drawn chart. We seperate this from the svg variable because it's necessary to do so to get axis margins to work with d3
     const chart = svg
       .append("g")
-      .attr("class", "inner-chart-max-grade")
-      .attr("transform", "translate(" + 67 + "," + margin.top + ")");
+      .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // For tooltip, creates tooltip as a div sibling of our svg element in the html tree. 
     // Bothsvg and tooltip sit directly under a parent div with class "chart-container-max-grade"
@@ -153,10 +150,11 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
 
     const circle = chart.selectAll(".circle")
       .data(chartArray)
-
+    
     circle.enter()
       .append("circle")
       .attr("r", 4)
+      .attr("class", "circle")
       .attr("cx", (d) => {
         return xScale(d.month) 
       })
@@ -164,12 +162,13 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
         return yScale(d.grade) as number
       })  
       .on("mouseenter", (event, d) => {
+        console.log(event)
         div.transition()
           .duration(500)
           .style("opacity", 1)
         div.html(`<div class="circle-text">${d.grade}</div>`)	
-          .style("left", (xScale(d.month)) + addedMargins + "px")		
-          .style("top", (yScale(d.grade) as number) + margin.top + "px");	
+          .style("left", (xScale(d.month)) + "px")		
+          .style("top", (yScale(d.grade) as number) + "px");	
       })					
       .on("mouseleave", (event, d) => {		
         div.transition()
@@ -177,7 +176,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
           .style("opacity", 0)
       });
 
-  }, [data, height, width, typeOfClimbing, fromDate, toDate, styleOfClimbing]);
+  }, [data, typeOfClimbing, fromDate, toDate, styleOfClimbing]);
 
   return (
     <div className="container">

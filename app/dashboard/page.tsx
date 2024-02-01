@@ -1,4 +1,5 @@
 import Dashboard from './components/Dashboard'
+import './page.css'
 
 function Hi() {
   return (
