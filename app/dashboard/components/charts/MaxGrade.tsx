@@ -8,8 +8,7 @@ import Dropdown from "../form-inputs/Dropdown";
 import DatePicker from "../form-inputs/DatePicker";
 import {YDS_ARRAY} from "@/app/constants";
 import { dateIsInRange } from "../../../utils/dateIsInRange";
-import './common.css'
-import './max-grade.css'
+import styles from './max-grade.module.css'
 
 interface Props {
   data: RawDataList
@@ -20,88 +19,71 @@ interface LineData {
   grade: string;
 }
 
-interface DateRange {
-  fromDate?: string;
-  toDate?: string;
-}
-
 const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   const [typeOfClimbing, setTypeOfClimbing] = useState<string>("Sport");
   const [styleOfClimbing, setStyleOfClimbing] = useState<string>("Onsight");
   const [fromDate, setFromDate] = useState<string>("")
   const [toDate, setToDate] = useState<string>("")
   const svgRef = useRef<SVGSVGElement>(null);
-  const width: number = 700
-  const height: number = 500
-  const dataFilteredByClimbingType = data.filter((oneRoute: RawDataRow) => {
-    const filteredResult:RawDataRow[] = []
-    // use the below logic if we have received a time range
-    if (fromDate && toDate) {
-      return (dateIsInRange(new Date(fromDate), new Date(toDate), new Date(oneRoute.Date)) && oneRoute["Route Type"] === typeOfClimbing && oneRoute["Lead Style"] === styleOfClimbing)
-    }
-    // use the below logic if we have no time range
-    return (oneRoute["Route Type"] === typeOfClimbing && oneRoute["Lead Style"] === styleOfClimbing)
-  });
-  // TODO: Need to come up with a solution for what to do when a route has no exlicit Lead Style set. Which style should we default to in that case
-  // const dataFilteredByClimbingTypeAndStyle = dataFilteredByClimbingType.filter((oneRoute: RawDataRow) => oneRoute["Lead Style"] === styleOfClimbing);
-  const datesByMonth = dateProcessor(dataFilteredByClimbingType)
-  
-  // Convenience function eliminating broken dates, allowing us to pass the dates into xScale...We could get this from datesByMonth with some more work inside the function but this makes it look simpler below
-  const dates:(Date)[] = dataFilteredByClimbingType
-    .map(row => d3.timeParse("%Y-%m-%d")(row.Date))
-    .filter((date): date is Date => date !== null);
+  const tooltipRef = useRef<HTMLDivElement>(null)
 
-  // This takes our input data and organizes it in a way that will allow us to pass it into the d3.line() function
-  const chartArray:LineData[] = datesByMonth.map(monthGroup => {
-    let maxNumber = 0
-    let rating = ""
-    monthGroup.dates.forEach(row => {
-      if (row["Converted Grade"] > maxNumber) {
-        rating = row["Rating"]
-        maxNumber = row["Converted Grade"]
-      }
-    })
-    return {
-      month: new Date(`${monthGroup.year}-${monthGroup.month}-01 00:00:00`), 
-      grade: rating
-    }   
-    // After returning all these items, we use .filter to make sure that if any of the dates were messed up, we omit those because they will break the chart
-    // Gotta use !Number.isNaN here because if we just use groupedItem.month.getMonth() for our filter, it will return 0 for January, which is falsy, so it will be filtered out
-  }).filter(groupedItem => !Number.isNaN(groupedItem.month.getMonth()))
-
-  // Sets margins
-  const margin = {top: 30, right: 60, bottom: 50, left: 20}
   useEffect(() => {
     if (data.length === 0) return;
-    
-    // Does some funky react shit to grab the svg element and work with it from within the react component lifecycle
-    const svg = d3.select(svgRef.current);
+    const dataFilteredByClimbingType = data.filter((oneRoute: RawDataRow) => {
+      
+      // use the below logic if we have received a time range
+      if (fromDate && toDate) {
+        return (dateIsInRange(new Date(fromDate), new Date(toDate), new Date(oneRoute.Date)) && oneRoute["Route Type"] === typeOfClimbing && oneRoute["Lead Style"] === styleOfClimbing && oneRoute["Style"] !== "TR")
+      }
+      // use the below logic if we have no time range
+      return (oneRoute["Route Type"] === typeOfClimbing && oneRoute["Lead Style"] === styleOfClimbing && oneRoute["Style"] !== "TR")
+    });
 
-    // Creates the canvas upon which we can draw svg things
-    svg
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
+    const datesByMonth = dateProcessor(dataFilteredByClimbingType)
     
-    const addedMargins = margin.left + margin.right
+    // Convenience function allowing us to pass the dates into xScale...
+    const dates:(Date)[] = dataFilteredByClimbingType
+      .map(row => d3.timeParse("%Y-%m-%d")(row.Date))
+      .filter((date): date is Date => date !== null);
 
-    // If line has already been drawn and user changes dropdown menu, erase existing line. 
-    // If no line has been drawn, this does nothing
-    d3.select(".inner-chart-max-grade").remove();
+    // This takes our input data and organizes it in a way that will allow us to pass it into the d3.line() function
+    // Basically, here we grab the maximum Grade climbed in each month
+    const chartArray:LineData[] = datesByMonth.map(monthGroup => {
+      let maxNumber = 0
+      let rating = ""
+      monthGroup.dates.forEach(row => {
+        if (row["Converted Grade"] > maxNumber) {
+          rating = row["Rating"]
+          maxNumber = row["Converted Grade"]
+        }
+      })
+      return {
+        month: new Date(`${monthGroup.year}-${monthGroup.month}-01 00:00:00`), 
+        grade: rating
+      }   
+    // After returning all these items, we use .filter to make sure that if any of the dates were messed up, we omit those because they will break the chart
+    // Gotta use !Number.isNaN here because if we just use groupedItem.month.getMonth() for our filter, it will return 0 for January, which is falsy, so it will be filtered out
+    }).filter(groupedItem => !Number.isNaN(groupedItem.month.getMonth()))
 
-    // removing this line: since the onsight chart is added first, this line removes the tooltip div from that chart
-    // d3.select(".tooltip").remove();
+    const margin = { top: 30, right: 60, bottom: 50, left: 60 };
+    const width = 960 - margin.left - margin.right; // Virtual width for drawing purposes
+    const height = 500 - margin.top - margin.bottom; // Virtual height for drawing purposes
     
+    // Grabs reference to the svg canvas, and sets the viewBox, which, in conjunction with PreserveAspectRatio, makes the chart scaleable
+    const svg = d3.select(svgRef.current)
+      .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet');
+
+    // in case we have already drawn this chart, erase existing lines and data points
+    d3.selectAll(`.${styles['circle']}`).remove();
+    d3.select(`.${styles['chart-line']}`).remove();
+    d3.select(`.${styles['y-axis']}`).remove();
+    d3.select(`.${styles['x-axis']}`).remove();
+
     // Creates an inner box which will represent the actual drawn chart. We seperate this from the svg variable because it's necessary to do so to get axis margins to work with d3
     const chart = svg
       .append("g")
-      .attr("class", "inner-chart-max-grade")
-      .attr("transform", "translate(" + 67 + "," + margin.top + ")");
-
-    // For tooltip, creates tooltip as a div sibling of our svg element in the html tree. 
-    // Bothsvg and tooltip sit directly under a parent div with class "chart-container-max-grade"
-    const div = d3.select(".chart-container-max-grade").append("div")	
-      .attr("class", "tooltip")
-      .style("opacity", "0")
+      .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // We want a modified min date. What was happening before was that we had set XScale to be based off earliest date in the list of dates
     // but we were packaging up dates by month in dateProcessor, and then re-creating date objects via month later on,
@@ -110,10 +92,12 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     // TODO - Since getUTCMonth is zero-index(lame), we need to create some logic to make sure it behaves well when we get january (invalid date entry)
     // Will need to update the month to twelve in that case, and icnrement back the year one value
     const min = d3.min(dates)
+  
     // this is zero indexed, but we don't want to add one because we actually want the previous month to accomodate above problem
     const minMonth = min?.getUTCMonth() as number
     const minYear = min?.getUTCFullYear()
     const newMin = new Date(`${minYear}-${minMonth}-01 00:00:00`)
+    
     // This thing takes in Date objects and converts them to x coordinates on our svg canvas
     const xScale = d3
       .scaleTime()
@@ -128,20 +112,20 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
 
     // Places the x axis
     chart.append("g")
-      .attr("class", "x-axis")
+      .attr("class", `${styles["x-axis"]}`)
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(xScale));
     
     // Places the y axis
     chart.append("g")
-      .attr("class", "y-axis")
+      .attr("class", `${styles["y-axis"]}`)
       .call(d3.axisLeft(yScale));
 
     // Draws the line for the chart
     chart.append("path")
       .datum(chartArray)
       .attr("fill", "none")
-      .attr("class", "chart-line")
+      .attr("class", `${styles["chart-line"]}`)
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
       .attr("d", d3.line<LineData>()
@@ -149,12 +133,13 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
         .y((chartArrayItem) => { return yScale(chartArrayItem.grade) as number })
       )
 
-    const circle = chart.selectAll(".circle")
-      .data(chartArray)
-
+    const circle = chart.selectAll(`.${styles['circle']}`)
+      .data(chartArray) 
+      
     circle.enter()
       .append("circle")
       .attr("r", 4)
+      .attr("class", `${styles['circle']}`)
       .attr("cx", (d) => {
         return xScale(d.month) 
       })
@@ -162,23 +147,23 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
         return yScale(d.grade) as number
       })  
       .on("mouseenter", (event, d) => {
-        div.transition()
-              .duration(500)
-              .style("opacity", 1)
-        div.html(`<div class="circle-text">${d.grade}</div>`)	
-          .style("left", (xScale(d.month)) + addedMargins + "px")		
-          .style("top", (yScale(d.grade) as number) + margin.top + "px");	
+        if (tooltipRef.current) {
+          tooltipRef.current.style.opacity = "1"
+          tooltipRef.current.innerHTML = `Grade: ${d.grade}<br>Date: ${d.month.toLocaleString('en-US', { month: 'long' })} | ${d.month.getFullYear()}`
+          tooltipRef.current.style.left = `${event.offsetX + 10}px`
+          tooltipRef.current.style.top = `${event.offsetY + 10}px`
+        }
       })					
       .on("mouseleave", (event, d) => {		
-        div.transition()
-              .duration(500) 		
-              .style("opacity", 0)
-      });
+        if (tooltipRef.current){
+          tooltipRef.current.style.opacity = "0"
+        }
+      })
 
-  }, [data, height, width, dates, chartArray, typeOfClimbing]);
-  
+  }, [data, typeOfClimbing, fromDate, toDate, styleOfClimbing]);
+
   return (
-    <div className="container">
+    <div className={styles["container"]}>
       <div className="dropdown-menus">
         <Dropdown options={["Sport", "Trad"]} onChange={setTypeOfClimbing} />
         {
@@ -186,6 +171,8 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
           TODO: Currently, in the data category "Style" inside of the mountain project data, one of the options is TR. The other options are Follow Lead and Solo
           However, Sport and Trad are listed as a "Type" of climbing, so we can't filter for toprope in our Type Dropdown.
           Top rope is not a "Lead Style" either, however. It is simply a "Style". So we need to figure out how to filter for top-rope ideally without needing another dropdown just for it.
+
+          // Since we have already seperated data into TR and lead in parent Visualization component, we can just pass down the different data sets from the parent component.
        */
         }
         <Dropdown options={["Onsight", "Fell/Hung", "Redpoint"]} onChange={setStyleOfClimbing} />
@@ -193,10 +180,11 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
         <DatePicker date={toDate} setDate={setToDate} />
       </div>
 
-      <div className={`chart-container-max-grade`}>
-        <div className="y-axis-label">Grade</div>
-        <div className="x-axis-label">Date</div>
+      <div className={styles[`chart-container-max-grade`]}>
+        <div className={styles["y-axis-label"]}>Grade</div>
+        <div className={styles["x-axis-label"]}>Date</div>
         <svg ref={svgRef}></svg>
+        <div ref={tooltipRef} id={styles["tooltip"]}></div>
       </div>
     </div>
   );

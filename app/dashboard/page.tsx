@@ -1,12 +1,12 @@
 import Dashboard from './components/Dashboard'
+import './page.css'
 
-function Hi() {
+function DashboardPage() {
   return (
     <div>
-      <p>Choose A CSV file then upload it!</p>
       <Dashboard />
     </div>
   )
 }
    
-export default Hi
+export default DashboardPage
