@@ -29,34 +29,26 @@
     padding: 10px;
 }
 
-circle:hover {
+.circle:hover {
     fill: red;
     cursor: pointer;
 }
 
 .x-axis-label {
     position: absolute;
-    font-size: 16px;
+    font-size: 14px;
     bottom: 0;
-    left: 50%;
     transform: translateX(-50%);
-}
-
-.x-axis-label {
-    position: absolute;
-    font-size: 16px;
-    bottom: 0;
-    left: 30%;
+    left: 50%;
 }
 
 .y-axis-label {
     position: absolute;
-    font-size: 16px;
-    transform: rotate(-90deg);
+    font-size: 14px;
+    transform: translateX(-50%) rotate(-90deg);
     top: 40%;
 }
 
 .dropdown-menus {
     display: flex;
 }
-

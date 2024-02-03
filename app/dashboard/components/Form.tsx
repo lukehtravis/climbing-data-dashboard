@@ -55,6 +55,7 @@ const Form: React.FC<Props> = ({ populateData }: Props) => {
   return (
     <div>
       <form onSubmit={handleFormSubmit}>
+        <p>Choose A CSV file then upload it!</p>
         <input type="file" accept=".csv" onChange={handleFileChange} />
         <button type="submit">Upload</button>
       </form>

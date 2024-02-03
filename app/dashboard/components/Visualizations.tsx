@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Box, CardHeader } from '@mui/material';
+import { Box } from '@mui/material';
 import OnsightPercentage from "./charts/OnsightPercentage";
 import MaxGradeChart from "./charts/MaxGrade";
 import Card from "./Card";
@@ -45,9 +45,9 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
       <CounterTables compartmentalizedData={{sport: sportClimbs, boulders: boulders, trad: tradClimbs, TR: topRope, all: data}} />
       
       <div className={`${styles['line-charts']}`}>
-        {/* <Card>
+        <Card>
           <OnsightPercentage data={data}/>
-        </Card> */}
+        </Card>
         <Card>
           <MaxGradeChart data={data} />
         </Card>

@@ -8,8 +8,7 @@ import Dropdown from "../form-inputs/Dropdown";
 import DatePicker from "../form-inputs/DatePicker";
 import {YDS_ARRAY} from "@/app/constants";
 import { dateIsInRange } from "../../../utils/dateIsInRange";
-import './common.css'
-import './max-grade.css'
+import styles from './max-grade.module.css'
 
 interface Props {
   data: RawDataList
@@ -18,11 +17,6 @@ interface Props {
 interface LineData {
   month: Date;
   grade: string;
-}
-
-interface DateRange {
-  fromDate?: string;
-  toDate?: string;
 }
 
 const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
@@ -53,6 +47,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       .filter((date): date is Date => date !== null);
 
     // This takes our input data and organizes it in a way that will allow us to pass it into the d3.line() function
+    // Basically, here we grab the maximum Grade climbed in each month
     const chartArray:LineData[] = datesByMonth.map(monthGroup => {
       let maxNumber = 0
       let rating = ""
@@ -74,22 +69,17 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     const width = 960 - margin.left - margin.right; // Virtual width for drawing purposes
     const height = 500 - margin.top - margin.bottom; // Virtual height for drawing purposes
     
-    // Does some funky react shit to grab the svg element and work with it from within the react component lifecycle
+    // Grabs reference to the svg canvas, and sets the viewBox, which, in conjunction with PreserveAspectRatio, makes the chart scaleable
     const svg = d3.select(svgRef.current)
       .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
       .attr('preserveAspectRatio', 'xMidYMid meet');
 
-    // If line has already been drawn and user changes dropdown menu, erase existing line. 
-    // If no line has been drawn, this does nothing
-    console.log("circles", d3.select(".circle"))
-    d3.selectAll(".circle").remove();
-    d3.select(".chart-line").remove();
-    d3.select(".y-axis").remove();
-    d3.select(".x-axis").remove();
+    // in case we have already drawn this chart, erase existing lines and data points
+    d3.selectAll(`.${styles['circle']}`).remove();
+    d3.select(`.${styles['chart-line']}`).remove();
+    d3.select(`.${styles['y-axis']}`).remove();
+    d3.select(`.${styles['x-axis']}`).remove();
 
-    // removing this line: since the onsight chart is added first, this line removes the tooltip div from that chart
-    // d3.select(".tooltip").remove();
-    
     // Creates an inner box which will represent the actual drawn chart. We seperate this from the svg variable because it's necessary to do so to get axis margins to work with d3
     const chart = svg
       .append("g")
@@ -107,8 +97,8 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
     const minMonth = min?.getUTCMonth() as number
     const minYear = min?.getUTCFullYear()
     const newMin = new Date(`${minYear}-${minMonth}-01 00:00:00`)
+    
     // This thing takes in Date objects and converts them to x coordinates on our svg canvas
-  
     const xScale = d3
       .scaleTime()
       .domain([newMin, d3.max(dates)] as [Date, Date])
@@ -122,20 +112,20 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
 
     // Places the x axis
     chart.append("g")
-      .attr("class", "x-axis")
+      .attr("class", `${styles["x-axis"]}`)
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(xScale));
     
     // Places the y axis
     chart.append("g")
-      .attr("class", "y-axis")
+      .attr("class", `${styles["y-axis"]}`)
       .call(d3.axisLeft(yScale));
 
     // Draws the line for the chart
     chart.append("path")
       .datum(chartArray)
       .attr("fill", "none")
-      .attr("class", "chart-line")
+      .attr("class", `${styles["chart-line"]}`)
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
       .attr("d", d3.line<LineData>()
@@ -143,13 +133,13 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
         .y((chartArrayItem) => { return yScale(chartArrayItem.grade) as number })
       )
 
-    const circle = chart.selectAll(".circle")
+    const circle = chart.selectAll(`.${styles['circle']}`)
       .data(chartArray) 
       
     circle.enter()
       .append("circle")
       .attr("r", 4)
-      .attr("class", "circle")
+      .attr("class", `${styles['circle']}`)
       .attr("cx", (d) => {
         return xScale(d.month) 
       })
@@ -159,7 +149,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       .on("mouseenter", (event, d) => {
         if (tooltipRef.current) {
           tooltipRef.current.style.opacity = "1"
-          tooltipRef.current.innerHTML = `Grade: ${d.grade}<br>Date: ${d.month.getMonth()}`
+          tooltipRef.current.innerHTML = `Grade: ${d.grade}<br>Date: ${d.month.toLocaleString('en-US', { month: 'long' })} | ${d.month.getFullYear()}`
           tooltipRef.current.style.left = `${event.offsetX + 10}px`
           tooltipRef.current.style.top = `${event.offsetY + 10}px`
         }
@@ -173,7 +163,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   }, [data, typeOfClimbing, fromDate, toDate, styleOfClimbing]);
 
   return (
-    <div className="container">
+    <div className={styles["container"]}>
       <div className="dropdown-menus">
         <Dropdown options={["Sport", "Trad"]} onChange={setTypeOfClimbing} />
         {
@@ -190,12 +180,11 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
         <DatePicker date={toDate} setDate={setToDate} />
       </div>
 
-      <div className={`chart-container-max-grade`}>
-        <div className="y-axis-label">Grade</div>
-        <div className="x-axis-label">Date</div>
-        
+      <div className={styles[`chart-container-max-grade`]}>
+        <div className={styles["y-axis-label"]}>Grade</div>
+        <div className={styles["x-axis-label"]}>Date</div>
         <svg ref={svgRef}></svg>
-        <div ref={tooltipRef} id="tooltip"></div>
+        <div ref={tooltipRef} id={styles["tooltip"]}></div>
       </div>
     </div>
   );
