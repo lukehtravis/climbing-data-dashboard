@@ -31,6 +31,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
   const [fromDate, setFromDate] = useState<string>("")
   const [toDate, setToDate] = useState<string>("")
   const svgRef = useRef<SVGSVGElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (data.length === 0) return;
@@ -94,12 +95,6 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       .append("g")
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // For tooltip, creates tooltip as a div sibling of our svg element in the html tree. 
-    // Bothsvg and tooltip sit directly under a parent div with class "chart-container-max-grade"
-    const div = d3.select(".chart-container-max-grade").append("div")	
-      .attr("class", "tooltip")
-      .style("opacity", "0")
-
     // We want a modified min date. What was happening before was that we had set XScale to be based off earliest date in the list of dates
     // but we were packaging up dates by month in dateProcessor, and then re-creating date objects via month later on,
     // and this was causing the map to be skewed left, because the dates we would re-create at the first of the month would often be earlier 
@@ -149,8 +144,8 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       )
 
     const circle = chart.selectAll(".circle")
-      .data(chartArray)
-    
+      .data(chartArray) 
+      
     circle.enter()
       .append("circle")
       .attr("r", 4)
@@ -162,19 +157,18 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
         return yScale(d.grade) as number
       })  
       .on("mouseenter", (event, d) => {
-        console.log(event)
-        div.transition()
-          .duration(500)
-          .style("opacity", 1)
-        div.html(`<div class="circle-text">${d.grade}</div>`)	
-          .style("left", (xScale(d.month)) + "px")		
-          .style("top", (yScale(d.grade) as number) + "px");	
+        if (tooltipRef.current) {
+          tooltipRef.current.style.opacity = "1"
+          tooltipRef.current.innerHTML = `Grade: ${d.grade}<br>Date: ${d.month.getMonth()}`
+          tooltipRef.current.style.left = `${event.offsetX + 10}px`
+          tooltipRef.current.style.top = `${event.offsetY + 10}px`
+        }
       })					
       .on("mouseleave", (event, d) => {		
-        div.transition()
-          .duration(500) 		
-          .style("opacity", 0)
-      });
+        if (tooltipRef.current){
+          tooltipRef.current.style.opacity = "0"
+        }
+      })
 
   }, [data, typeOfClimbing, fromDate, toDate, styleOfClimbing]);
 
@@ -199,7 +193,9 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
       <div className={`chart-container-max-grade`}>
         <div className="y-axis-label">Grade</div>
         <div className="x-axis-label">Date</div>
+        
         <svg ref={svgRef}></svg>
+        <div ref={tooltipRef} id="tooltip"></div>
       </div>
     </div>
   );

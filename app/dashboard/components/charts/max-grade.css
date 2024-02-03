@@ -19,8 +19,11 @@
     /* Adjusts height automatically to maintain aspect ratio */
 }
 
-.tooltip {
+#tooltip {
     position: absolute;
+    opacity: 0;
+    width: 50px;
+    transition: opacity 0.3s;
     background-color: #fff;
     border: 1px solid #333;
     padding: 10px;
@@ -29,7 +32,6 @@
 circle:hover {
     fill: red;
     cursor: pointer;
-    position: relative;
 }
 
 .x-axis-label {
