@@ -18,7 +18,6 @@ export const getAverageBoulderGrade = (data:RawDataList): string | undefined => 
   let sumOfGrades:number = 0
   for (const row of data) {
     let rowRating = row["Rating"].replace("V", "")
-    console.log("RowRating:", row["Rating"])
     sumOfGrades += Number(rowRating)
   }
   const averageRating = sumOfGrades/numberOfClimbs

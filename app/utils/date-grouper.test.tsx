@@ -11,7 +11,6 @@ describe('dateProcessor', () => {
   it('groups rows from the same month and year correctly', () => {
     
     const result = dateProcessor(rawData);
-
     expect(result.length).toBe(3);
     expect(result[0].month).toBe('1');
     expect(result[0].year).toBe('2023');
