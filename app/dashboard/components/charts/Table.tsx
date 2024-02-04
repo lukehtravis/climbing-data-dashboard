@@ -1,16 +1,10 @@
-import React, {useEffect, useRef, useState} from "react";
-import { Grid } from "gridjs-react";
-import "gridjs/dist/theme/mermaid.css";
-import {RawDataList} from '../../types/raw-data-from-mountain-project';
-import {aggregatePitches} from '../../../utils/aggregators/aggregatePitches'
-import {countDates} from '../../../utils/aggregators/countDates'
-import {getAverageGrade} from '../../../utils/aggregators/getAverageGrade'
+import React, { useRef } from 'react'
+import { Grid } from 'gridjs-react'
+import 'gridjs/dist/theme/mermaid.css'
 
 interface Props {
-
-    data: [][],
-    columnNames: string[]
-
+  data: [][]
+  columnNames: string[]
 }
 
 // interface RawDataRow {
@@ -32,21 +26,14 @@ interface Props {
 //     "Converted Grade": number
 // }
 
+const Table = ({ data, columnNames }: Props) => {
+  const wrapperRef = useRef(null)
 
-const Table = ({data, columnNames}:Props) => {
-  const wrapperRef = useRef(null);
-    
   return (
     <div>
-      <Grid
-        data={data}
-        columns={columnNames}
-      />
+      <Grid data={data} columns={columnNames} />
     </div>
   )
-    
-  
-  
 }
 
 export default Table

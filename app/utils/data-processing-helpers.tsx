@@ -1,11 +1,11 @@
-import { CODE_TO_GRADE_MAPPING } from "../constants"
+import { CODE_TO_GRADE_MAPPING } from '../constants'
 
 export const mappingMpCodesToYdsGrades = (mpCode: string): string => {
   const grade = CODE_TO_GRADE_MAPPING[mpCode]
   if (grade) {
     return grade
   }
-  return "N/A"
+  return 'N/A'
 }
 
 export const eliminateSlashesFromGrades = (grade: string): string => {
@@ -41,23 +41,23 @@ export const flattenPlusAndMinusGrades = (grade: string): string => {
 }
 
 export const cleanBoulderGrades = () => {
-//  V3-4
-//  V0-1
-//  V2
-//  V1+
-//  V0
-//  V1+
-//  V-easy
-//  V2 R
-//  V1-2 PG13
-// create function to ignore all plus and minus and danger ratings and just get raw numbers
+  //  V3-4
+  //  V0-1
+  //  V2
+  //  V1+
+  //  V0
+  //  V1+
+  //  V-easy
+  //  V2 R
+  //  V1-2 PG13
+  // create function to ignore all plus and minus and danger ratings and just get raw numbers
 }
 
 export const removeRiskRating = (grade: string): string => {
-  let riskFactors = ['PG13', 'R', 'X'];
+  let riskFactors = ['PG13', 'R', 'X']
   for (let item of riskFactors) {
     if (grade.includes(item)) {
-      return grade.slice(0, (grade.indexOf(item))).trim()
+      return grade.slice(0, grade.indexOf(item)).trim()
     }
   }
   return grade
