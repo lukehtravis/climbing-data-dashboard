@@ -17,6 +17,16 @@
     /* Makes the SVG responsive */
     height: auto;
     /* Adjusts height automatically to maintain aspect ratio */
+    .circle:hover {
+        fill: red;
+        cursor: pointer;
+    }
+    .x-axis {
+        color: orange;
+    }
+    .y-axis {
+        color: orange;
+    }
 }
 
 #tooltip {
@@ -30,9 +40,8 @@
     padding: 10px;
 }
 
-.circle:hover {
-    fill: red;
-    cursor: pointer;
+.dropdown-menus {
+    display: flex;
 }
 
 .x-axis-label {
@@ -48,8 +57,4 @@
     font-size: 14px;
     transform: translateX(-50%) rotate(-90deg);
     top: 40%;
-}
-
-.dropdown-menus {
-    display: flex;
 }

@@ -3,15 +3,16 @@
 import React, {useEffect, useRef, useContext} from "react";
 import { PanelContext } from "../../context/PanelContext";
 import * as d3 from 'd3';
-import styles from './max-grade.module.css'
+import styles from './line-chart.module.css'
 import { LineData } from "../../types/line-data";
 import { dateOrPrimitive } from "@/app/utils/dateOrPrimitive";
 
 interface Props {
-  dimensions: {width: number, height: number}
+  dimensions: {width: number, height: number},
+  title: string
 }
 
-const MaxGradeChart: React.FC<Props> = ({ dimensions = {width: 500, height: 500}}: Props) => {
+const LineChart: React.FC<Props> = ({ dimensions = {width: 500, height: 500}, title = "Line Chart"}: Props) => {
   
   const {chartData} = useContext(PanelContext);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -29,10 +30,10 @@ const MaxGradeChart: React.FC<Props> = ({ dimensions = {width: 500, height: 500}
       .attr('preserveAspectRatio', 'xMidYMid meet');
 
     // in case we have already drawn this chart, erase existing lines and data points
-    d3.selectAll(`.${styles['circle']}`).remove();
-    d3.select(`.${styles['chart-line']}`).remove();
-    d3.select(`.${styles['y-axis']}`).remove();
-    d3.select(`.${styles['x-axis']}`).remove();
+    d3.selectAll(`.${title} .${styles['circle']}`).remove();
+    d3.select(`.${title} .${styles['chart-line']}`).remove();
+    d3.select(`.${title} .${styles['y-axis']}`).remove();
+    d3.select(`.${title} .${styles['x-axis']}`).remove();
 
     // Creates an inner box which will represent the actual drawn chart. We seperate this from the svg variable because it's necessary to do so to get axis margins to work with d3
     const chart = svg
@@ -59,6 +60,8 @@ const MaxGradeChart: React.FC<Props> = ({ dimensions = {width: 500, height: 500}
       .call(d3.axisLeft(chartData.yAxis));
 
     // Draws the line for the chart
+    console.log(chartData)
+    
     chart.append("path")
       .datum(chartData.lineData)
       .attr("fill", "none")
@@ -66,11 +69,11 @@ const MaxGradeChart: React.FC<Props> = ({ dimensions = {width: 500, height: 500}
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
       .attr("d", d3.line<LineData>()
-        .x((lineDataItem) => { return chartData.xAxis(lineDataItem.x) })
-        .y((lineDataItem) => { return chartData.yAxis(lineDataItem.y) })
+        .x((lineDataItem) => {  return chartData.xAxis(lineDataItem.x) })
+        .y((lineDataItem) => {  return chartData.yAxis(lineDataItem.y) })
       )
 
-    const circle = chart.selectAll(`.${styles['circle']}`)
+    const circle = chart.selectAll(`.${title} .${styles['circle']}`)
       .data(chartData.lineData) 
       
     circle.enter()
@@ -97,10 +100,10 @@ const MaxGradeChart: React.FC<Props> = ({ dimensions = {width: 500, height: 500}
         }
       })
 
-  }, [chartData, dimensions.height, dimensions.width]);
+  }, [chartData, title, dimensions.height, dimensions.width]);
 
   return (
-    <div className={styles["container"]}>
+    <div className={`${styles["container"]} ${title}`}>
       <div className={styles[`chart-container-max-grade`]}>
         <div className={styles["y-axis-label"]}>Grade</div>
         <div className={styles["x-axis-label"]}>Date</div>
@@ -111,4 +114,4 @@ const MaxGradeChart: React.FC<Props> = ({ dimensions = {width: 500, height: 500}
   );
 } 
 
-export default MaxGradeChart;
+export default LineChart;

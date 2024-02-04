@@ -2,8 +2,6 @@
 
 import React from "react";
 import { Box } from '@mui/material';
-import OnsightPercentage from "./charts/OnsightPercentage";
-import MaxGradeChart from "./charts/MaxGrade";
 import Card from "./Card";
 import Panel from "./Panel"
 import { RawDataList } from "../types/raw-data-from-mountain-project";
@@ -11,6 +9,7 @@ import CounterTables from "./charts/CounterTables"
 import styles from "./visualizations.module.css"
 import LineChart from "./charts/LineChart"
 import { maxGradeProcessor } from "./charts/maxGradeProcessors";
+import { maxOnsightProcessor } from "./charts/maxOnsightProcessor";
 import { PanelContextProvider } from "../context/PanelContext";
 
 // We can define what this object will look like after we decide exactly what we want to pass in
@@ -45,23 +44,27 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
   }) : null
   // In this file, we take in some of the processed data, and pass it into a series of vis charts we can create independently and import in here
   return (
-    // <Box sx={{ flexGrow: 1 }}>
+    
     <Box>
       <CounterTables compartmentalizedData={{sport: sportClimbs, boulders: boulders, trad: tradClimbs, TR: topRope, all: data}} />
       
       <div className={`${styles['line-charts']}`}>
-        {/* <Card>
-          <OnsightPercentage data={data}/>
-        </Card> */}
-        <PanelContextProvider>
-          <Panel data={data} chartProcessor={maxGradeProcessor}>
-            <LineChart dimensions={{width: 960, height: 800}}/>
-          </Panel>
-        </PanelContextProvider>
-        
-        {/* <Card>
-          <MaxGradeChart data={data} />
-        </Card> */}
+        <Card>
+          <PanelContextProvider>
+            <Panel data={data} chartProcessor={maxOnsightProcessor}>
+              <LineChart title="onsight" dimensions={{width:960, height: 800}} />
+            </Panel>
+          </PanelContextProvider>
+        </Card>
+       
+        <Card>
+          <PanelContextProvider>
+            <Panel data={data} chartProcessor={maxGradeProcessor}>
+              <LineChart title={"maxgrade"} dimensions={{width: 960, height: 800}}/>
+            </Panel>
+          </PanelContextProvider>
+        </Card>
+
       </div>
     </Box>
   );
