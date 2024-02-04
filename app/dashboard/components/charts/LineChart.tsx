@@ -5,6 +5,7 @@ import { PanelContext } from "../../context/PanelContext";
 import * as d3 from 'd3';
 import styles from './max-grade.module.css'
 import { LineData } from "../../types/line-data";
+import { dateOrPrimitive } from "@/app/utils/dateOrPrimitive";
 
 interface Props {
   dimensions: {width: number, height: number}
@@ -85,7 +86,7 @@ const MaxGradeChart: React.FC<Props> = ({ dimensions = {width: 500, height: 500}
       .on("mouseenter", (event, d) => {
         if (tooltipRef.current) {
           tooltipRef.current.style.opacity = "1"
-          tooltipRef.current.innerHTML = `Grade: ${d.y}<br>Date: ${d.x.toLocaleString('en-US', { month: 'long' })} | ${d.x.getFullYear()}`
+          tooltipRef.current.innerHTML = `${dateOrPrimitive(d.y)} | ${dateOrPrimitive(d.x)}`
           tooltipRef.current.style.left = `${event.offsetX + 10}px`
           tooltipRef.current.style.top = `${event.offsetY + 10}px`
         }
