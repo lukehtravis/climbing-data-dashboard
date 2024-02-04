@@ -1,5 +1,5 @@
 {
-  "extends": "next/core-web-vitals",
+  "extends": ["next/core-web-vitals", "plugin:prettier/recommended"],
   "rules": {
     // 2 space indentation everywhere enforced
     "indent": ["error", 2]

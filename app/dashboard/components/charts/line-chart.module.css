@@ -1,60 +1,60 @@
 .container {
-    width: 100%;
+  width: 100%;
 }
 
 .chart-container-max-grade {
-    width: 100%;
-    /* Adjust based on the parent container */
-    margin: auto;
-    /* Center the chart if needed */
-    position: relative;
+  width: 100%;
+  /* Adjust based on the parent container */
+  margin: auto;
+  /* Center the chart if needed */
+  position: relative;
 }
 
 .chart-container-max-grade svg {
-    display: block;
-    /* Removes default margin around SVG */
-    width: 100%;
-    /* Makes the SVG responsive */
-    height: auto;
-    /* Adjusts height automatically to maintain aspect ratio */
-    .circle:hover {
-        fill: red;
-        cursor: pointer;
-    }
-    .x-axis {
-        color: orange;
-    }
-    .y-axis {
-        color: orange;
-    }
+  display: block;
+  /* Removes default margin around SVG */
+  width: 100%;
+  /* Makes the SVG responsive */
+  height: auto;
+  /* Adjusts height automatically to maintain aspect ratio */
+  .circle:hover {
+    fill: red;
+    cursor: pointer;
+  }
+  .x-axis {
+    color: orange;
+  }
+  .y-axis {
+    color: orange;
+  }
 }
 
 #tooltip {
-    position: absolute;
-    opacity: 0;
-    width: fit-content;
-    transform: translateX(-50%) translateY(-150%);
-    transition: opacity 0.3s;
-    background-color: #fff;
-    border: 1px solid #333;
-    padding: 10px;
+  position: absolute;
+  opacity: 0;
+  width: fit-content;
+  transform: translateX(-50%) translateY(-150%);
+  transition: opacity 0.3s;
+  background-color: #fff;
+  border: 1px solid #333;
+  padding: 10px;
 }
 
 .dropdown-menus {
-    display: flex;
+  display: flex;
 }
 
 .x-axis-label {
-    position: absolute;
-    font-size: 14px;
-    bottom: 0;
-    transform: translateX(-50%);
-    left: 50%;
+  position: absolute;
+  font-size: 14px;
+  bottom: 0;
+  transform: translateX(-50%);
+  left: 50%;
 }
 
 .y-axis-label {
-    position: absolute;
-    font-size: 14px;
-    transform: translateX(-50%) rotate(-90deg);
-    top: 40%;
+  position: absolute;
+  font-size: 14px;
+  transform: translateX(-50%) rotate(-90deg);
+  top: 40%;
 }

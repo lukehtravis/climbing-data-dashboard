@@ -1,5 +1,5 @@
 function isValidDate(date: Date): boolean {
-  return date instanceof Date && !isNaN(date.getTime());
+  return date instanceof Date && !isNaN(date.getTime())
 }
 
 export default isValidDate
