@@ -5,9 +5,14 @@ import { Box } from '@mui/material';
 import OnsightPercentage from "./charts/OnsightPercentage";
 import MaxGradeChart from "./charts/MaxGrade";
 import Card from "./Card";
+import Panel from "./Panel"
 import { RawDataList } from "../types/raw-data-from-mountain-project";
 import CounterTables from "./charts/CounterTables"
 import styles from "./visualizations.module.css"
+import LineChart from "./charts/LineChart"
+import { maxGradeProcessor } from "./charts/maxGradeProcessors";
+import { PanelContextProvider } from "../context/PanelContext";
+
 // We can define what this object will look like after we decide exactly what we want to pass in
 interface Props {
   data: RawDataList
@@ -45,12 +50,18 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
       <CounterTables compartmentalizedData={{sport: sportClimbs, boulders: boulders, trad: tradClimbs, TR: topRope, all: data}} />
       
       <div className={`${styles['line-charts']}`}>
-        <Card>
+        {/* <Card>
           <OnsightPercentage data={data}/>
-        </Card>
-        <Card>
+        </Card> */}
+        <PanelContextProvider>
+          <Panel data={data} chartProcessor={maxGradeProcessor}>
+            <LineChart dimensions={{width: 960, height: 800}}/>
+          </Panel>
+        </PanelContextProvider>
+        
+        {/* <Card>
           <MaxGradeChart data={data} />
-        </Card>
+        </Card> */}
       </div>
     </Box>
   );

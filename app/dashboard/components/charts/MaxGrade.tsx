@@ -67,7 +67,7 @@ const MaxGradeChart: React.FC<Props> = ({data}: Props) => {
 
     const margin = { top: 30, right: 60, bottom: 50, left: 60 };
     const width = 960 - margin.left - margin.right; // Virtual width for drawing purposes
-    const height = 500 - margin.top - margin.bottom; // Virtual height for drawing purposes
+    const height = 800 - margin.top - margin.bottom; // Virtual height for drawing purposes
     
     // Grabs reference to the svg canvas, and sets the viewBox, which, in conjunction with PreserveAspectRatio, makes the chart scaleable
     const svg = d3.select(svgRef.current)
