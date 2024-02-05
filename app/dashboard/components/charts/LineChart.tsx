@@ -9,10 +9,16 @@ import { dateOrPrimitive } from '@/app/utils/dateOrPrimitive'
 
 interface Props {
   dimensions: { width: number; height: number }
-  title: string
+  title: string,
+  axisLabels: AxisLabels
 }
 
-const LineChart: React.FC<Props> = ({ dimensions = { width: 500, height: 500 }, title = 'Line Chart' }: Props) => {
+interface AxisLabels {
+  x: string,
+  y: string
+}
+
+const LineChart: React.FC<Props> = ({ dimensions = { width: 500, height: 500 }, title = 'Line Chart', axisLabels }: Props) => {
   const { chartData } = useContext(PanelContext)
   const svgRef = useRef<SVGSVGElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
@@ -57,8 +63,6 @@ const LineChart: React.FC<Props> = ({ dimensions = { width: 500, height: 500 }, 
     chart.append('g').attr('class', `${styles['y-axis']}`).call(d3.axisLeft(chartData.yAxis))
 
     // Draws the line for the chart
-    console.log(chartData)
-
     chart
       .append('path')
       .datum(chartData.lineData)
@@ -86,20 +90,23 @@ const LineChart: React.FC<Props> = ({ dimensions = { width: 500, height: 500 }, 
       .attr('r', 4)
       .attr('class', `${styles['circle']}`)
       .attr('cx', (d) => {
-        return chartData.xAxis(d.x)
+        const dataItem = d as LineData;
+        return chartData.xAxis(dataItem.x)
       })
       .attr('cy', (d) => {
-        return chartData.yAxis(d.y)
+        const dataItem = d as LineData;
+        return chartData.yAxis(dataItem.y)
       })
-      .on('mouseenter', (event, d) => {
+      .on('mouseenter', (event:MouseEvent, d) => {
+        const dataItem = d as LineData;
         if (tooltipRef.current) {
           tooltipRef.current.style.opacity = '1'
-          tooltipRef.current.innerHTML = `${dateOrPrimitive(d.y)} | ${dateOrPrimitive(d.x)}`
-          tooltipRef.current.style.left = `${event.offsetX + 10}px`
+          tooltipRef.current.innerHTML = `${dateOrPrimitive(dataItem.y)} | ${dateOrPrimitive(dataItem.x)}`
+          tooltipRef.current.style.left = `${event.offsetX}px`
           tooltipRef.current.style.top = `${event.offsetY + 10}px`
         }
       })
-      .on('mouseleave', (event, d) => {
+      .on('mouseleave', (event:MouseEvent, d) => {
         if (tooltipRef.current) {
           tooltipRef.current.style.opacity = '0'
         }
@@ -109,8 +116,8 @@ const LineChart: React.FC<Props> = ({ dimensions = { width: 500, height: 500 }, 
   return (
     <div className={`${styles['container']} ${title}`}>
       <div className={styles[`chart-container-max-grade`]}>
-        <div className={styles['y-axis-label']}>Grade</div>
-        <div className={styles['x-axis-label']}>Date</div>
+        <div className={styles['y-axis-label']}>{axisLabels.y}</div>
+        <div className={styles['x-axis-label']}>{axisLabels.x}</div>
         <svg ref={svgRef}></svg>
         <div ref={tooltipRef} id={styles['tooltip']}></div>
       </div>
