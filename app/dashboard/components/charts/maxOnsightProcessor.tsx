@@ -37,14 +37,6 @@ export const maxOnsightProcessor = ({ data, fromDate, toDate, typeOfClimbing, st
   })
   chartArray.sort((a, b) => YDS_SCALE.indexOf(a.x as string) - YDS_SCALE.indexOf(b.x as string))
   const indexOfHighestGradeOnsight = YDS_SCALE.indexOf(chartArray[chartArray.length - 1].x as string) + 1
-  console.log('bad chartArray', chartArray)
-  console.log('bad indexOfHighestGradeOnsight', indexOfHighestGradeOnsight)
-  console.log(
-    'bad domain',
-    YDS_SCALE.slice(0, indexOfHighestGradeOnsight).map(function (d) {
-      return d
-    })
-  )
   const xScale = d3.scalePoint().domain(
     YDS_SCALE.slice(0, indexOfHighestGradeOnsight).map(function (d) {
       return d

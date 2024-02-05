@@ -47,20 +47,18 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
   return (
     <div>
       <CounterTables compartmentalizedData={{ sport: sportClimbs, boulders: boulders, trad: tradClimbs, TR: topRope, all: data }} />
-
       <div className={`${styles['line-charts']}`}>
         <Card>
           <PanelContextProvider>
             <Panel data={data} chartProcessor={maxOnsightProcessor}>
-              <LineChart title='onsight' dimensions={{ width: 960, height: 800 }} />
+              <LineChart title='onsight' dimensions={{ width: 960, height: 800 }} axisLabels={{ x: 'Grade', y: 'Onsight Percentage' }} />
             </Panel>
           </PanelContextProvider>
         </Card>
-
         <Card>
           <PanelContextProvider>
             <Panel data={data} chartProcessor={maxGradeProcessor}>
-              <LineChart title={'maxgrade'} dimensions={{ width: 960, height: 800 }} />
+              <LineChart title={'maxgrade'} dimensions={{ width: 960, height: 800 }} axisLabels={{ x: 'Grade', y: 'Date' }} />
             </Panel>
           </PanelContextProvider>
         </Card>
