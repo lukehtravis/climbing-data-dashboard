@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Home() {
   return (
     <main className='flex min-h-screen flex-col items-center justify-between p-24'>
@@ -7,7 +9,7 @@ export default function Home() {
         </div>
         <div className='font-dmsans text-teal-500 mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left'>
           <p className='text-teal-500'>
-            visit the dashboard <a href='/dashboard'>here</a>
+            visit the dashboard <Link href='/dashboard'>here</Link>
           </p>
         </div>
       </div>

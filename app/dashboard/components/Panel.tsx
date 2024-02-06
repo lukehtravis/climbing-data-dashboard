@@ -29,13 +29,13 @@ const Panel = ({ data, includeDropdowns = false, includeDatePicker = false, char
   return (
     <div className={styles.container}>
       {includeDropdowns && (
-        <div>
+        <div className={styles['select-inputs']}>
           <Dropdown options={['Sport', 'Trad']} onChange={setTypeOfClimbing} />
           <Dropdown options={['Onsight', 'Fell/Hung', 'Redpoint']} onChange={setStyleOfClimbing} />
         </div>
       )}
       {includeDatePicker && (
-        <div>
+        <div className={`${styles['date-pickers']}`}>
           <DatePicker date={fromDate} setDate={setFromDate} />
           <DatePicker date={toDate} setDate={setToDate} />
         </div>
