@@ -57,7 +57,7 @@ const Visualizations: React.FC<Props> = ({ data }: Props) => {
         </Card>
         <Card>
           <PanelContextProvider>
-            <Panel data={data} chartProcessor={maxGradeProcessor}>
+            <Panel data={data} chartProcessor={maxGradeProcessor} includeDropdowns={true} includeDatePicker={true}>
               <LineChart title={'maxgrade'} dimensions={{ width: 960, height: 800 }} axisLabels={{ x: 'Grade', y: 'Date' }} />
             </Panel>
           </PanelContextProvider>

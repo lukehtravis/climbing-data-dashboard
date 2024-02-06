@@ -1,3 +1,11 @@
 .container {
   width: 100%;
 }
+
+.select-inputs {
+  display: flex;
+}
+
+.date-pickers {
+  display: flex;
+}
